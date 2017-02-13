@@ -31,6 +31,14 @@ angular.module('myApp.services', [])
   }
 ])
 
+.factory('UserRegisterService', ['$http', function($http) {
+  return {
+    addUser: function(credentials) {
+      return $http.post('/api/login', credentials);
+    }
+  };
+}])
+
 .factory('AuthService', ['$http', function($http) {
   return {
     login: function(credentials) {

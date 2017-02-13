@@ -16,28 +16,23 @@ angular.module('myApp', [
 ]).
 config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
-        $routeProvider.when('/admin', {
-           redirectTo: '/admin/login'
-        });
+        //USER ROUTES
         $routeProvider.when('/live', {
             templateUrl: 'partials/live-stream.html',
             controller: 'liveStream'
         });
-        $routeProvider.when('/:url', {
-            templateUrl: 'partials/page.html',
-            controller: 'PageCtrl'
-        });
-        $routeProvider.when('/admin/login', {
-            templateUrl: 'partials/admin/login.html',
-            controller: 'AdminLoginCtrl'
-        });
         $routeProvider.when('/user/register', {
             templateUrl: 'partials/user/register.html',
-            controller: 'UserRegisterCtrl'
+            controller: 'CentralRegisterCtrl'
         });
-        $routeProvider.when('/admin/logout', {
+
+        //ADMIN ROUTES
+        $routeProvider.when('/admin/login', {
             templateUrl: 'partials/admin/login.html',
-            controller: 'AdminLogoutCtrl'
+            controller: 'CentralLoginCtrl'
+        });
+        $routeProvider.when('/admin', {
+           redirectTo: '/admin/login'
         });
         $routeProvider.when('/admin/pages', {
             templateUrl: 'partials/admin/pages.html',
@@ -46,6 +41,14 @@ config(['$routeProvider', '$locationProvider',
         $routeProvider.when('/admin/add-edit-page/:id', {
             templateUrl: 'partials/admin/add-edit-page.html',
             controller: 'AddEditPageCtrl'
+        });
+        $routeProvider.when('/admin/logout', {
+            templateUrl: 'partials/admin/login.html',
+            controller: 'CentralLogoutCtrl' //central logout for all users
+        });
+        $routeProvider.when('/:url', {
+            templateUrl: 'partials/page.html',
+            controller: 'PageCtrl'
         });
         $routeProvider.otherwise({
             redirectTo: '/home'

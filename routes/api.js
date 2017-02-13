@@ -15,7 +15,6 @@ function sessionCheck(request,response,next){
 }
 
 /* USER ROUTES */
-
 router.get('/', function(req, res) {
   res.send('Welcome to the API zone');
 });
@@ -107,14 +106,17 @@ router.get('/pages/admin-details/:id', sessionCheck, function(request, response)
 
 /* POST: Add new admin user */
 router.post('/add-user', function(request, response) {
-    var salt, hash, password;
+    var salt, hash, password, userType, dateAdded;
     password = request.body.password;
+    userType = request.body.userType;
     salt = bcrypt.genSaltSync(10);
     hash = bcrypt.hashSync(password, salt);
 
     var AdminUser = new adminUser({
         username: request.body.username,
-        password: hash
+        password: hash,
+        userType: userType,
+        dateAdded: new Date(Date.now())
     });
     AdminUser.save(function(err) {
         if (!err) {
@@ -141,6 +143,7 @@ router.post('/login', function(request, response) {
   var username = request.body.username;
   var password = request.body.password;
 
+
   adminUser.findOne({
     username: username
   }, function(err, data) {
@@ -148,12 +151,18 @@ router.post('/login', function(request, response) {
       return response.send(401, "User Doesn't exist");
     } else {
       var usr = data;
-
       if (username == usr.username && bcrypt.compareSync(password, usr.password)) {
+        adminUser.update({
+            username: usr.username
+        }, {
+            $set: {
+                lastLogin: new Date(Date.now())
+            }
+        }).exec();
 
         request.session.regenerate(function() {
           request.session.user = username;
-          return response.send(username);
+          return response.send({user: username, userTypes: usr.userType});
 
         });
       } else {
