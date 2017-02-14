@@ -25,6 +25,10 @@ config(['$routeProvider', '$locationProvider',
             templateUrl: 'partials/user/register.html',
             controller: 'CentralRegisterCtrl'
         });
+        $routeProvider.when('/user/profile/:id', {
+            templateUrl: 'partials/user/profile.html',
+            controller: 'UserProfileCtrl'
+        });
 
         //ADMIN ROUTES
         $routeProvider.when('/admin/login', {

@@ -14,16 +14,18 @@ angular.module('myApp.directives', []).
             function(response) {
               $scope.navLinks = response.data;
             });
-        } else if(path == "/admin" && $scope.loggedInUser) {
-            $scope.navLinks = [{
-              title: 'User List',
-              url: 'admin/user-list'
-            },
-            {
-              title: 'Pages',
-              url: 'admin/pages'
-            }]
-          }
+        } 
+
+        if(path == "/admin" && $scope.loggedInUser) {
+          $scope.navLinks = [{
+            title: 'User List',
+            url: 'admin/user-list'
+          },
+          {
+            title: 'Pages',
+            url: 'admin/pages'
+          }]
+        }
         },
 
         templateUrl: 'partials/directives/nav.html'
@@ -33,7 +35,7 @@ angular.module('myApp.directives', []).
 directive('adminLogin', [
   function() {
     return {
-      controller: function($scope, $cookies) {
+      controller: function($scope, $cookies, $location) {
         var locationPath = $location.path().substr(0, 6);
         $scope.$watch(function () {
           return $cookies.get('loggedInUser', {path: "/"});

@@ -9,8 +9,7 @@ controller('AppCtrl', ['$scope', 'AuthService','flashMessageService','$location'
 
         $scope.location = $location['$$path'].split("/")[1];
         $scope.userType = $cookies.get('userType');
-
-        console.log($scope.userType)
+        $scope.user = $cookies.get('loggedInUser');
 
           if($scope.location == "admin" && $scope.userType == "user") {
             $location.path("/");
@@ -34,7 +33,17 @@ controller('AppCtrl', ['$scope', 'AuthService','flashMessageService','$location'
 }]).
 controller('liveStream', ['$scope','AuthService','flashMessageService','$location',
     function($scope,AuthService,flashMessageService,$location) {
+      var now = new Date();
+
+      $scope.sunday = now.getDay() == 0;
+      $scope.hour = now.getHours() >= 18;
+
       flashMessageService.setMessage("loading live stream");
+    }
+]).
+controller('UserProfileCtrl', ['$scope','$cookies', 'AuthService','flashMessageService','$location',
+    function($scope,$cookies,AuthService,flashMessageService,$location) {
+      $scope.currentUser = $cookies.get('loggedInUser');
     }
 ])
 
@@ -93,28 +102,45 @@ function($scope, $log, pagesFactory, $routeParams, $location, flashMessageServic
 ])
 
 //CENTRAL CONTROLLERS FOR ALL USERS
-.controller('CentralRegisterCtrl', ['$scope', '$log', 'UserRegisterService', 'flashMessageService',
-  function($scope, $log, UserRegisterService, flashMessageService) {
-    $scope.user = {};
+.controller('CentralRegisterCtrl', ['$scope','$controller','$rootScope', '$log','$location', 'UserRegisterService', 'flashMessageService',
+  function($scope,$controller,$rootScope, $log, $location, UserRegisterService, flashMessageService) {
+    $scope.newUser = {
+        username: '',
+        password: '',
+        userType: '',
+        accountStatus: 'active'
+    };
+
+    if($scope.location == "user") {
+      $scope.newUser.userType = "user";
+    }
+
+    var newUserScope = $scope.$new();
+
     $scope.addUser = function() {
-      UserRegisterService.addUser($scope.user).then(
+      UserRegisterService.addUser($scope.newUser).then(
         function(response) {
-          $scope.allPages = response.data;
           flashMessageService.setMessage("New user added successfully");
+
+          $controller('CentralLoginCtrl', {$scope : newUserScope});
+          newUserScope.login($scope.newUser);
         },
         function(err) {
           $log.error(err);
         });
-    }
+    };
   }
 ]).
-controller('CentralLoginCtrl', ['$scope', '$location', '$cookies', 'AuthService','$log','flashMessageService',
-    function($scope, $location, $cookies, AuthService, $log, flashMessageService) {
+controller('CentralLoginCtrl', ['$scope', '$rootScope', '$location', '$cookies', 'AuthService','$log','flashMessageService',
+    function($scope, $rootScope, $location, $cookies, AuthService, $log, flashMessageService) {
+
       $scope.credentials = {
         username: '',
         password: '',
-        userType: ''
+        userType: '',
+        accountStatus:''
       };
+
       $scope.login = function(credentials) {
         AuthService.login(credentials).then(
           function(res, err) {
@@ -122,8 +148,8 @@ controller('CentralLoginCtrl', ['$scope', '$location', '$cookies', 'AuthService'
             $cookies.put('userType', res.data.userTypes);
             if(res.data.userTypes == "admin")
                 $location.path('/admin/pages');
-            else
-                $location.path('/');
+            else if(res.data.userTypes == "admin" && res.data.accountStatus == "active")
+                $location.path('/user/profile/'+ $cookies.get('loggedInUser'));
           },
           function(err) {
             flashMessageService.setMessage(err.data);

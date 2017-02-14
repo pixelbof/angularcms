@@ -1,2 +1,7 @@
 <h1>Live Stream</h1>
-<div>This is a live streaming service</div>
+<div class="row">
+    <div class="col-md-9">live stream here</div>
+    <div class="col-md-3" ng-if="loggedInUser && sunday == true && hour == true">chat area here</div>
+    <div class="col-md-3" ng-if="loggedInUser && sunday != true && hour != true">Chat area is not open currently, please wait until Sunday at 6pm</div>
+    <div class="col-md-3" ng-if="!loggedInUser">Please log in or register to be able to chat</div>
+</div>

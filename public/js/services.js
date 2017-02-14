@@ -31,12 +31,13 @@ angular.module('myApp.services', [])
   }
 ])
 
-.factory('UserRegisterService', ['$http', function($http) {
-  return {
-    addUser: function(credentials) {
-      return $http.post('/api/login', credentials);
-    }
-  };
+.factory('UserRegisterService', ['$http', 
+  function($http) {
+    return {
+      addUser: function(details) {
+        return $http.post('/api/add-user', details);
+      }
+    };
 }])
 
 .factory('AuthService', ['$http', function($http) {
@@ -64,4 +65,4 @@ angular.module('myApp.services', [])
             return $q.reject(response);
         }
     };
-}]);;
+}]);

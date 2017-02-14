@@ -3,7 +3,7 @@
 </div>
 
 <div ng-if="loggedInUser && userType == 'user'">
-    Welcome {{loggedInUser}} |  <a href="user/profile">My Profile</a> | <a href="admin/logout">Logout</a>
+    Welcome {{loggedInUser}} |  <a href="user/profile/{{user}}">My Profile</a> | <a href="admin/logout">Logout</a>
 </div>
 
 <div ng-if="!loggedInUser">

@@ -1,18 +1,17 @@
 <h1>Register</h1>
 <hr/>
 
-<form role="form" id="login" ng-submit="addUser(credentials)">
-<input type="hidden" value="user" ng-model="user.userType" />
+<form role="form" id="login" ng-submit="addUser()">
 <div class="form-group">
 <label>Login</label>
-
-<input class="form-control" type="text" ng-model="user.username"/>
+<input type="hidden" ng-model="newUser.userType" ng-value='user' />
+<input class="form-control" type="text" ng-model="newUser.username"/>
 </div>
 <div class="form-group">
 <label>Password</label>
-<input class="form-control" type="password"  ng-model=" user.password"/>
+<input class="form-control" type="password"  ng-model=" newUser.password"/>
 </div>
 
-<input type="submit" class="btn btn-success" value="Login">
+<input type="submit" class="btn btn-success" value="Create Account">
 </div>
 </form>
