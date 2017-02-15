@@ -11,4 +11,7 @@ router.get('*', function(request, response) {
     response.sendfile('./public/index.html');
 });
 
+/*Live Chat feature */
+
+
 module.exports = router;

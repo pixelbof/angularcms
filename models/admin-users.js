@@ -6,7 +6,7 @@ var adminUser = new Schema({
         userType: String,
         dateAdded: Date,
         lastLogin: Date,
-        accountStatus: String
+        accountStatus: String,
     });
     var adminUser = mongoose.model('adminUser', adminUser);
 module.exports=adminUser;

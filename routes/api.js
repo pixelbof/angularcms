@@ -106,7 +106,7 @@ router.get('/pages/admin-details/:id', sessionCheck, function(request, response)
 
 /* POST: Add new admin user */
 router.post('/add-user', function(request, response) {
-    var salt, hash, password, userType, dateAdded;
+    var salt, hash, password, userType, accountStatus, dateAdded;
     password = request.body.password;
     userType = request.body.userType;
     salt = bcrypt.genSaltSync(10);
@@ -116,6 +116,7 @@ router.post('/add-user', function(request, response) {
         username: request.body.username,
         password: hash,
         userType: userType,
+        accountStatus: request.body.accountStatus,
         dateAdded: new Date(Date.now())
     });
     AdminUser.save(function(err) {
@@ -162,7 +163,7 @@ router.post('/login', function(request, response) {
 
         request.session.regenerate(function() {
           request.session.user = username;
-          return response.send({user: username, userTypes: usr.userType});
+          return response.send({user: username, userType: usr.userType, accountStatus: usr.accountStatus});
 
         });
       } else {

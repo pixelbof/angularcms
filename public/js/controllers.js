@@ -38,7 +38,8 @@ controller('liveStream', ['$scope','AuthService','flashMessageService','$locatio
       $scope.sunday = now.getDay() == 0;
       $scope.hour = now.getHours() >= 18;
 
-      flashMessageService.setMessage("loading live stream");
+      console.log($scope.sunday + ' ' + $scope.hour)
+      //flashMessageService.setMessage("loading live stream");
     }
 ]).
 controller('UserProfileCtrl', ['$scope','$cookies', 'AuthService','flashMessageService','$location',
@@ -108,21 +109,20 @@ function($scope, $log, pagesFactory, $routeParams, $location, flashMessageServic
         username: '',
         password: '',
         userType: '',
-        accountStatus: 'active'
+        accountStatus: 'active',
     };
 
     if($scope.location == "user") {
       $scope.newUser.userType = "user";
     }
 
-    var newUserScope = $scope.$new();
-
     $scope.addUser = function() {
       UserRegisterService.addUser($scope.newUser).then(
         function(response) {
           flashMessageService.setMessage("New user added successfully");
-
+          var newUserScope = $scope.$new();
           $controller('CentralLoginCtrl', {$scope : newUserScope});
+          console.log($scope.newUser)
           newUserScope.login($scope.newUser);
         },
         function(err) {
@@ -142,14 +142,19 @@ controller('CentralLoginCtrl', ['$scope', '$rootScope', '$location', '$cookies',
       };
 
       $scope.login = function(credentials) {
+        console.log(credentials)
         AuthService.login(credentials).then(
           function(res, err) {
             $cookies.put('loggedInUser', res.data.user);
-            $cookies.put('userType', res.data.userTypes);
-            if(res.data.userTypes == "admin")
+            $cookies.put('userType', res.data.userType);
+
+            if(res.data.userType == "admin")
                 $location.path('/admin/pages');
-            else if(res.data.userTypes == "admin" && res.data.accountStatus == "active")
+            else if(res.data.userType == "user" && res.data.accountStatus == "active")
                 $location.path('/user/profile/'+ $cookies.get('loggedInUser'));
+            else
+                $location.path('/');
+                flashMessageService.setMessage("Your account has been disabled by the admin, you are unable to login because of this");
           },
           function(err) {
             flashMessageService.setMessage(err.data);

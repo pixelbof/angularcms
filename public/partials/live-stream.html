@@ -1,7 +1,11 @@
 <h1>Live Stream</h1>
 <div class="row">
-    <div class="col-md-9">live stream here</div>
+    <div class="col-md-9">
+        <script id="76581_c_421422" width="100%" height="400" src="//player.dacast.com/js/player.js"  class="dacast-video"></script>
+    </div>
+
     <div class="col-md-3" ng-if="loggedInUser && sunday == true && hour == true">chat area here</div>
-    <div class="col-md-3" ng-if="loggedInUser && sunday != true && hour != true">Chat area is not open currently, please wait until Sunday at 6pm</div>
+    <div class="col-md-3" ng-if="loggedInUser && sunday != true">Chat area is not open currently, please wait until Sunday at 6pm</div>
+    <div class="col-md-3" ng-if="loggedInUser && sunday == true && time != true">It is Sunday but we are not ready yet, hold on we are nearly there - believe me it will be worth the wait</div>
     <div class="col-md-3" ng-if="!loggedInUser">Please log in or register to be able to chat</div>
 </div>
