@@ -8,26 +8,35 @@ angular.module('myApp.directives', []).
   function() {
     return {
       controller: function($scope, pagesFactory, $location) {
-        var path = $location.path().substr(0, 6);
-        if (path != "/admin") {
-          pagesFactory.getPages().then(
-            function(response) {
-              $scope.navLinks = response.data;
-            });
-        } 
+          $scope.$on('$routeChangeSuccess', function() {
+            $scope.navLinks = "";
+            if ($location.path().split("/")[1] != "admin") {
+              pagesFactory.getPages().then(
+                function(response) {
+                  $scope.navLinks = response.data;
+                });
+            } 
 
-        if(path == "/admin" && $scope.loggedInUser) {
-          $scope.navLinks = [{
-            title: 'User List',
-            url: 'admin/user-list'
-          },
-          {
-            title: 'Pages',
-            url: 'admin/pages'
-          }]
-        }
+            if($location.path().split("/")[1] == "admin") {
+              $scope.navLinks = "";
+
+              if($scope.loggedInUser) {
+                $scope.navLinks = [{
+                  title: 'Dashboard',
+                  url: 'admin/dashboard'
+                },
+                {
+                  title: 'User List',
+                  url: 'admin/user-list'
+                },
+                {
+                  title: 'Pages',
+                  url: 'admin/pages'
+                }]
+              }
+            }
+          });
         },
-
         templateUrl: 'partials/directives/nav.html'
       };
   }

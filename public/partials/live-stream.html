@@ -1,7 +1,12 @@
 <h1>Live Stream</h1>
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-9" ng-if="sunday == true && hour == true || sunday == true && time != true">
         <script id="76581_c_421422" width="100%" height="400" src="//player.dacast.com/js/player.js"  class="dacast-video"></script>
+    </div>
+
+    <div class="col-md-9" ng-if="sunday != true">
+        <p>It's not sunday but here is an old show</p>
+
     </div>
 
     <div class="col-md-3" ng-if="loggedInUser && sunday == true && hour == true">chat area here</div>

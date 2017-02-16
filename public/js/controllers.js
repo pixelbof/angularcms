@@ -38,7 +38,6 @@ controller('liveStream', ['$scope','AuthService','flashMessageService','$locatio
       $scope.sunday = now.getDay() == 0;
       $scope.hour = now.getHours() >= 18;
 
-      console.log($scope.sunday + ' ' + $scope.hour)
       //flashMessageService.setMessage("loading live stream");
     }
 ]).
@@ -54,8 +53,19 @@ controller('UserProfileCtrl', ['$scope','$cookies', 'AuthService','flashMessageS
 
     }
 ]).
-controller('AdminPagesCtrl', ['$scope', '$log', 'pagesFactory',
-  function($scope, $log, pagesFactory) {
+controller('AdminUserListCtrl', ['$scope', '$log', 'UserService',
+  function($scope, $log, UserService) {
+    UserService.getUsers().then(
+      function(response) {
+        $scope.allUsers = response.data;
+      },
+      function(err) {
+        $log.error(err);
+      });
+  }
+]).
+controller('AdminPagesCtrl', ['$scope', '$route', '$log', 'pagesFactory', '$location', 'flashMessageService',
+  function($scope, $route, $log, pagesFactory, $location, flashMessageService) {
     
     pagesFactory.getPages().then(
       function(response) {
@@ -66,7 +76,10 @@ controller('AdminPagesCtrl', ['$scope', '$log', 'pagesFactory',
       });
 
       $scope.deletePage = function(id) {
-        pagesFactory.deletePage(id);
+        pagesFactory.deletePage(id).then(function() {
+            flashMessageService.setMessage("Page deleted Successfully");
+            $route.reload();
+        });
       };
 
     }
@@ -96,7 +109,6 @@ function($scope, $log, pagesFactory, $routeParams, $location, flashMessageServic
           pagesFactory.savePage($scope.pageContent).then(
             function() {
               flashMessageService.setMessage("Page Saved Successfully");
-              flashMessageService.setType("success");
               $location.path('/admin/pages');
             },
             function() {

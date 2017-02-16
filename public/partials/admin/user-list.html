@@ -1,0 +1,24 @@
+<a href="admin/add-user/0" class="btn btn-success pull-right"> Add New User</a>
+<h1>Users List</h1>
+<hr/>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>User Type</th>
+      <th>Date Added</th>
+      <th>Last Login</th>
+      <th>Account Status</th>
+    </tr>
+  </thead>
+
+  <tr ng-repeat="adminUser in allUsers">
+    <td>{{adminUser.username}}</td>
+    <td>{{adminUser.userType}}</td>
+    <td>{{adminUser.dateAdded}}</td>
+    <td>{{adminUser.lastLogin}}</td>
+    <td>{{adminUser.accountStatus}}</td>
+    <td> <a ng-href="#" ng-click="deleteUser(adminUser._id)">Delete</a>
+    </td>
+  </tr>
+</table>

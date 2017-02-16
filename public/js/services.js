@@ -1,8 +1,8 @@
 'use strict';
 angular.module('myApp.services', [])
 
-.factory('pagesFactory', ['$http', 
-  function($http) {
+.factory('pagesFactory', ['$http', '$location',
+  function($http, $location) {
 
     return {
       getPages: function() {
@@ -30,6 +30,15 @@ angular.module('myApp.services', [])
     };
   }
 ])
+
+.factory('UserService', ['$http', 
+  function($http) {
+    return {
+      getUsers: function(user) {
+        return $http.post('/api/get-user');
+      }
+    };
+}])
 
 .factory('UsernameCheckService', ['$http', 
   function($http) {

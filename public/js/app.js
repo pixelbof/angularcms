@@ -42,6 +42,10 @@ config(['$routeProvider', '$locationProvider',
             templateUrl: 'partials/admin/dashboard.html',
             controller: 'AdminDashboardCtrl'
         });
+        $routeProvider.when('/admin/user-list', {
+            templateUrl: 'partials/admin/user-list.html',
+            controller: 'AdminUserListCtrl'
+        });
         $routeProvider.when('/admin/pages', {
             templateUrl: 'partials/admin/pages.html',
             controller: 'AdminPagesCtrl'
