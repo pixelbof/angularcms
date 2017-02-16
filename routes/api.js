@@ -129,12 +129,26 @@ router.post('/add-user', function(request, response) {
     });
 });
 
+/*GET: Get all users */
 router.get('/get-user', function(request, response) {
     return adminUser.find(function(err, adminUser) {
         if (!err) {
             return response.send(adminUser);
         } else {
             return response.send(500, err);
+        }
+    });
+});
+
+/*GET: find if user exists */
+router.post('/username-check', function(request, response) {
+    adminUser.findOne({
+        username: request.body.username
+    }, function(err, data) {
+        try {
+            return response.send(data.username)
+        } catch(err) {
+            return response.send('false')
         }
     });
 });

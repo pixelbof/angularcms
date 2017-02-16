@@ -49,7 +49,12 @@ controller('UserProfileCtrl', ['$scope','$cookies', 'AuthService','flashMessageS
 ])
 
 //ADMIN CONTROLLERS
-.controller('AdminPagesCtrl', ['$scope', '$log', 'pagesFactory',
+.controller('AdminDashboardCtrl', ['$scope', '$log', 'pagesFactory',
+  function($scope, $log, pagesFactory) {
+
+    }
+]).
+controller('AdminPagesCtrl', ['$scope', '$log', 'pagesFactory',
   function($scope, $log, pagesFactory) {
     
     pagesFactory.getPages().then(
@@ -103,8 +108,8 @@ function($scope, $log, pagesFactory, $routeParams, $location, flashMessageServic
 ])
 
 //CENTRAL CONTROLLERS FOR ALL USERS
-.controller('CentralRegisterCtrl', ['$scope','$controller','$rootScope', '$log','$location', 'UserRegisterService', 'flashMessageService',
-  function($scope,$controller,$rootScope, $log, $location, UserRegisterService, flashMessageService) {
+.controller('CentralRegisterCtrl', ['$scope','$controller','$rootScope', '$log','$location', 'UserRegisterService', 'UsernameCheckService', 'flashMessageService',
+  function($scope,$controller,$rootScope, $log, $location, UserRegisterService, UsernameCheckService, flashMessageService) {
     $scope.newUser = {
         username: '',
         password: '',
@@ -116,18 +121,31 @@ function($scope, $log, pagesFactory, $routeParams, $location, flashMessageServic
       $scope.newUser.userType = "user";
     }
 
+    $scope.checkUsername = function() {
+      UsernameCheckService.checkUsername($scope.newUser.username).then(
+        function(res) {
+          if(res.data !== 'false') {
+            flashMessageService.setMessage("This user already exists");
+          } else {
+            $scope.addUser($scope.newUser)
+          }
+        },
+      function(err) {
+        $log.error(err);
+      });
+    };
+
     $scope.addUser = function() {
       UserRegisterService.addUser($scope.newUser).then(
-        function(response) {
-          flashMessageService.setMessage("New user added successfully");
-          var newUserScope = $scope.$new();
-          $controller('CentralLoginCtrl', {$scope : newUserScope});
-          console.log($scope.newUser)
-          newUserScope.login($scope.newUser);
-        },
-        function(err) {
-          $log.error(err);
-        });
+      function(response) {
+        flashMessageService.setMessage("New user added successfully");
+        var newUserScope = $scope.$new();
+        $controller('CentralLoginCtrl', {$scope : newUserScope});
+        newUserScope.login($scope.newUser);
+      },
+      function(err) {
+        $log.error(err);
+      });
     };
   }
 ]).
@@ -142,19 +160,19 @@ controller('CentralLoginCtrl', ['$scope', '$rootScope', '$location', '$cookies',
       };
 
       $scope.login = function(credentials) {
-        console.log(credentials)
         AuthService.login(credentials).then(
           function(res, err) {
             $cookies.put('loggedInUser', res.data.user);
             $cookies.put('userType', res.data.userType);
 
             if(res.data.userType == "admin")
-                $location.path('/admin/pages');
+                $location.path('/admin/dashboard');
             else if(res.data.userType == "user" && res.data.accountStatus == "active")
                 $location.path('/user/profile/'+ $cookies.get('loggedInUser'));
-            else
+            else if(res.data.accountStatus != "active") {
                 $location.path('/');
                 flashMessageService.setMessage("Your account has been disabled by the admin, you are unable to login because of this");
+            }
           },
           function(err) {
             flashMessageService.setMessage(err.data);

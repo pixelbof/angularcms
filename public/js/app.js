@@ -38,6 +38,10 @@ config(['$routeProvider', '$locationProvider',
         $routeProvider.when('/admin', {
            redirectTo: '/admin/login'
         });
+        $routeProvider.when('/admin/dashboard', {
+            templateUrl: 'partials/admin/dashboard.html',
+            controller: 'AdminDashboardCtrl'
+        });
         $routeProvider.when('/admin/pages', {
             templateUrl: 'partials/admin/pages.html',
             controller: 'AdminPagesCtrl'

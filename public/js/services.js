@@ -31,6 +31,15 @@ angular.module('myApp.services', [])
   }
 ])
 
+.factory('UsernameCheckService', ['$http', 
+  function($http) {
+    return {
+      checkUsername: function(user) {
+        return $http.post('/api/username-check', {username: user});
+      }
+    };
+}])
+
 .factory('UserRegisterService', ['$http', 
   function($http) {
     return {
