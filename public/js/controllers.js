@@ -58,8 +58,8 @@ controller('UserProfileCtrl', ['$scope','$cookies', 'UserService','flashMessageS
         });
     }
 ]).
-controller('UserUpdateProfileCtrl', ['$scope', '$timeout', '$log', 'UserService', '$routeParams', '$location', 'flashMessageService', '$filter', '$cookies', 'base64',
-function($scope, $timeout, $log, UserService, $routeParams, $location, flashMessageService, $filter, $cookies, base64) {
+controller('UserUpdateProfileCtrl', ['$scope', '$timeout', '$log', 'UserService', '$routeParams', '$location', 'flashMessageService', '$filter', '$cookies',
+function($scope, $timeout, $log, UserService, $routeParams, $location, flashMessageService, $filter, $cookies) {
         $scope.userProfile = {};
         $scope.userProfile.profileImage;
         $scope.userProfile.username = $scope.loggedInUser;

@@ -12,8 +12,7 @@ angular.module('myApp', [
   'myApp.directives',
   'myApp.controllers',
   'ngCookies',
-  'message.flash',
-  'ab-base64'
+  'message.flash'
 ]).
 config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
