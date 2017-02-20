@@ -1,0 +1,36 @@
+<h1>Update Profile: {{loggedInUser}}</h1>
+<hr/>
+
+<form role="form" id="add-page" ng-submit="saveProfile()">
+<div class="form-group">
+<label>Profile Image</label>
+<input id="profileImage" type="file" class="file">
+</div>
+
+<form role="form" id="add-page" ng-submit="saveProfile()">
+<div class="form-group">
+<label>Full Name</label>
+<input class="form-control" type="text" ng-model="userProfile.fullName"/>
+</div>
+
+<div class="form-group">
+<label>Date of birth</label>
+<input class="form-control" type="date" ng-model="userProfile.dob"/>
+</div>
+
+<div class="form-group">
+<label>Small bit about you</label>
+<textarea class="form-control" ng-model="userProfile.shortBio"></textarea>
+</div>
+
+<div class="form-group" ng-if="userProfile.dateAdded != null">
+<label>Date Added</label>
+<input class="form-control"type="date" readonly ng-model="userProfile.dateAdded"/>
+</div>
+
+<input type="submit" class="btn btn-success" value="Update Profile">
+
+<div class="form-group" ng-if="userProfile.lastUpdated != null">
+<p class="small">This profile was last updated on: {{userProfile.lastUpdated | date: "fullDate"}}</p>
+</div>
+</form>

@@ -28,3 +28,15 @@
   content: "";
   padding: 0;
 }
+
+.profileImageHolder {
+  width: 120px;
+  height: 120px;
+  border-radius: 60px;
+  background-color: #cccccc;
+  margin: 0 auto;
+}
+
+.profileImageHolder img {
+  width: 100%;
+}

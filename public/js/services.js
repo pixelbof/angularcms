@@ -35,7 +35,17 @@ angular.module('myApp.services', [])
   function($http) {
     return {
       getUsers: function(user) {
-        return $http.post('/api/get-user');
+        return $http.get('/api/get-user');
+      },
+      getProfile: function(user) {
+        return $http.get('/api/get-profile/'+ user)
+      },
+      updateProfile: function(profileData) {
+        if(profileData.lastUpdated == null) {
+          return $http.post('/api/add-profile', profileData);
+        } else {
+          return $http.post('/api/update-user-profile', profileData);
+        }
       }
     };
 }])

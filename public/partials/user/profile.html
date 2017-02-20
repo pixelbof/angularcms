@@ -1,2 +1,29 @@
-<h1>User Profile {{currentUser}}</h1>
-<p>This is a user profile</p>
+<h1>My Profile</h1>
+
+<a class="btn btn-success" href="/user/update-profile">Edit Profile</a>
+<hr />
+<div class="col-md-8">
+    <div class="row">
+        <span class="col-md-4"><strong>Full Name:</strong> </span><p class="col-md-8">{{userProfile.fullName}}</p>
+        <span class="col-md-4"><strong>Date of Birth:</strong> </span><p class="col-md-8">{{userProfile.dob | date: "dd MMM yyyy"}}</p>
+        <span class="col-md-4"><strong>Bio:</strong> </span> <p class="col-md-8">{{userProfile.shortBio}}</p>
+        <span class="col-md-4"><strong>Date Added:</strong> </span><p class="col-md-8">{{userProfile.dateAdded | date: "dd MMM yyyy 'at' h:mma"}}</p>
+    </div>
+</div>
+<div class="col-md-4 profileImage">
+    <div class="profileImageHolder">
+        <img ng-src="{{userProfile.profileImage}}" />
+    </div>
+    
+    <div class="text-center col-md-12">
+    <div class="col-md-12"><strong>{{userProfile.username}}</strong></div>
+    <div class="col-md-12">User since <strong>{{userProfile.dateAdded | date: 'MMM yyyy'}}</strong></div>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <hr />
+    <div class="row">
+    <p class="small bg-info">Profile updated on: {{userProfile.lastUpdated | date: "medium"}}</p>
+    </div>
+</div>

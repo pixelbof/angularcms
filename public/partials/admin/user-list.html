@@ -15,8 +15,8 @@
   <tr ng-repeat="adminUser in allUsers">
     <td>{{adminUser.username}}</td>
     <td>{{adminUser.userType}}</td>
-    <td>{{adminUser.dateAdded}}</td>
-    <td>{{adminUser.lastLogin}}</td>
+    <td>{{adminUser.dateAdded | date: "dd MMM yyyy 'at' h:mma"}}</td>
+    <td>{{adminUser.lastLogin | date: "dd MMM yyyy 'at' h:mma"}}</td>
     <td>{{adminUser.accountStatus}}</td>
     <td> <a ng-href="#" ng-click="deleteUser(adminUser._id)">Delete</a>
     </td>

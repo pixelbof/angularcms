@@ -41,9 +41,73 @@ controller('liveStream', ['$scope','AuthService','flashMessageService','$locatio
       //flashMessageService.setMessage("loading live stream");
     }
 ]).
-controller('UserProfileCtrl', ['$scope','$cookies', 'AuthService','flashMessageService','$location',
-    function($scope,$cookies,AuthService,flashMessageService,$location) {
-      $scope.currentUser = $cookies.get('loggedInUser');
+controller('UserProfileCtrl', ['$scope','$cookies', 'UserService','flashMessageService','$location', '$log',
+    function($scope,$cookies,UserService,flashMessageService,$location,$log) {
+
+        UserService.getProfile($scope.loggedInUser).then(
+        function(response) {
+          $scope.userProfile = {};
+          $scope.userProfile = response.data;
+
+          if(response.data == "") {
+            $location.path('/user/update-profile')
+          }
+        },
+        function(err) {
+          console.log('error fetching data: ' + JSON.stringify(err));
+        });
+    }
+]).
+controller('UserUpdateProfileCtrl', ['$scope', '$timeout', '$log', 'UserService', '$routeParams', '$location', 'flashMessageService', '$filter', '$cookies', 'base64',
+function($scope, $timeout, $log, UserService, $routeParams, $location, flashMessageService, $filter, $cookies, base64) {
+        $scope.userProfile = {};
+        $scope.userProfile.profileImage;
+        $scope.userProfile.username = $scope.loggedInUser;
+        $scope.loggedInUser = $cookies.get('loggedInUser');
+        if($scope.userProfile.dateAdded == null) {
+          $scope.userProfile.dateAdded = new Date(Date.now());
+        }
+
+          function getBase64(file) {
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+              $scope.userProfile.profileImage = reader.result;
+            };
+            reader.onerror = function (error) {
+              console.log('Error: ', error);
+            };
+          }
+
+        UserService.getProfile($scope.loggedInUser).then(
+        function(response) {
+          $scope.userProfile = response.data;
+          $scope.userProfile.dob = new Date($scope.userProfile.dob);
+          $scope.userProfile.dateAdded = new Date($scope.userProfile.dateAdded);
+        },
+        function(err) {
+          $log.error(err);
+        });
+
+        $scope.saveProfile = function() {
+          var files = document.getElementById('profileImage').files;
+
+          if(files.length > 0) {
+            getBase64(files[0])
+          }
+
+          $timeout((function() {
+          UserService.updateProfile($scope.userProfile).then(
+            function(msg) {
+              $location.path('/user/profile/' + $scope.loggedInUser);
+              flashMessageService.setMessage(msg.data);
+            },
+            function(err) {
+              $log.error('error saving data: ' + JSON.stringify(err));
+            }
+          )
+          }), 1000);
+        };
     }
 ])
 

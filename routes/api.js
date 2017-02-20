@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 var Page= require('../models/page.js');
 var adminUser= require('../models/admin-users.js');
+var userProfile= require('../models/user-profile.js');
 
 /*Validate current session */
 function sessionCheck(request,response,next){
@@ -138,6 +139,57 @@ router.get('/get-user', function(request, response) {
             return response.send(500, err);
         }
     });
+});
+
+router.post('/add-profile', function(request, response) {
+    var UserProfile = new userProfile({
+        username: request.body.username,
+        fullName: request.body.fullName,
+        dob: request.body.dob,
+        profileImage: request.body.profileImage,
+        shortBio: request.body.shortBio,
+        dateAdded: request.body.dateAdded,
+        lastUpdated: new Date(Date.now())
+    });
+
+    UserProfile.save(function(err) {
+        if (!err) {
+            return response.send('your profile has been successfully created');
+
+        } else {
+            return response.send(err);
+        }
+    });
+});
+
+router.get('/get-profile/:user', function(request, response) {
+    return userProfile.findOne({
+        username: request.params.user
+    }, function(err, data) {
+        try {
+            return response.send(data)
+        } catch(err) {
+            return response.send('false')
+        }
+    });
+});
+
+router.post('/update-user-profile', function(request, response) {
+    userProfile.update({
+        username: request.body.username
+    }, {
+        $set: {
+            username: request.body.username,
+            fullName: request.body.fullName,
+            dob: request.body.dob,
+            profileImage: request.body.profileImage,
+            shortBio: request.body.shortBio,
+            dateAdded: request.body.dateAdded,
+            lastUpdated: new Date(Date.now())
+        }
+    }).exec();
+    
+    response.send("Your profile updated successfully");
 });
 
 /*GET: find if user exists */

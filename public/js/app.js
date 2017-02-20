@@ -12,7 +12,8 @@ angular.module('myApp', [
   'myApp.directives',
   'myApp.controllers',
   'ngCookies',
-  'message.flash'
+  'message.flash',
+  'ab-base64'
 ]).
 config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
@@ -25,9 +26,14 @@ config(['$routeProvider', '$locationProvider',
             templateUrl: 'partials/user/register.html',
             controller: 'CentralRegisterCtrl'
         });
-        $routeProvider.when('/user/profile/:id', {
+        $routeProvider.when('/user/profile/:user', {
             templateUrl: 'partials/user/profile.html',
             controller: 'UserProfileCtrl'
+        });
+
+        $routeProvider.when('/user/update-profile', {
+            templateUrl: 'partials/user/update-profile.html',
+            controller: 'UserUpdateProfileCtrl'
         });
 
         //ADMIN ROUTES
