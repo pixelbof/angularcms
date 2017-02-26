@@ -192,6 +192,57 @@ router.post('/update-user-profile', function(request, response) {
     response.send("Your profile updated successfully");
 });
 
+/*GET: Single user details */
+
+router.get('/get-user-single/:user', function(request, response) {
+    var user = request.params.user;
+
+    adminUser.findOne({
+        username: user
+    }, function(err, data) {
+        return response.send(data)
+    });
+});
+
+/* GET: Delete a user */
+router.get('/delete-user/:id', sessionCheck, function(request, response) {
+    var id = request.params.id;
+    adminUser.remove({
+        _id: id
+    }, function(err) {
+        return console.log(err);
+    });
+    return response.send('User id- ' + id + ' has been deleted');
+});
+
+/* GET: Disable a user */
+router.post('/disable-user', sessionCheck, function(request, response) {
+    var id = request.body.id;
+
+    adminUser.update({
+        _id: id
+    }, {
+        $set: {
+            accountStatus: "disabled",
+        }
+    }).exec();
+    response.send("User account status updated");
+});
+
+/* GET: enable a user */
+router.post('/enable-user', sessionCheck, function(request, response) {
+    var id = request.body.id;
+
+    adminUser.update({
+        _id: id
+    }, {
+        $set: {
+            accountStatus: "active",
+        }
+    }).exec();
+    response.send("User account status updated");
+});
+
 /*GET: find if user exists */
 router.post('/username-check', function(request, response) {
     adminUser.findOne({

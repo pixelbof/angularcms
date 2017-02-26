@@ -10,6 +10,10 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();    
+
+var server = require('http').Server(app);
+var io = require('socket.io').listen(server);
+
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/angcms');
 var db = mongoose.connection;
@@ -34,6 +38,74 @@ app.use('/api', api);
 app.use('/', index);
 app.use('/users', users);
 
+var usersList = [];
+var currentUser = '';
+
+var remove = function(elem) {
+  var arr = usersList;
+  var index = arr.indexOf(elem);
+  if (index >= 0) {
+    arr.splice( index, 1 );
+  }
+}
+
+var contains = function(needle) {
+    // Per spec, the way to identify NaN is that it is not equal to itself
+    var findNaN = needle !== needle;
+    var indexOf;
+
+    if(!findNaN && typeof Array.prototype.indexOf === 'function') {
+        indexOf = Array.prototype.indexOf;
+    } else {
+        indexOf = function(needle) {
+            var i = -1, index = -1;
+
+            for(i = 0; i < this.length; i++) {
+                var item = this[i];
+
+                if((findNaN && item !== item) || item === needle) {
+                    index = i;
+                    break;
+                }
+            }
+
+            return index;
+        };
+    }
+
+    return indexOf.call(this, needle) > -1;
+};
+
+io.sockets.on('connection', function(socket) {
+    // Use socket to communicate with this particular client only, sending it it's own id
+    socket.emit('welcome', { id: socket.id });
+
+    socket.on('newUser', function(data) {
+      currentUser = data.username;
+
+      if(contains.call(usersList, currentUser) != true && currentUser != null) {
+        usersList.push(currentUser);
+      }
+
+      io.sockets.emit('addUserToList', usersList);
+    });
+
+    socket.on('newMessage', function(data) {
+      io.sockets.emit('messageRecieve', data.message)
+    });
+
+    socket.on('disconnection', function(data) {
+      if(currentUser !== undefined) {
+        io.emit('messageRecieve', currentUser + " has disconnected!");
+      }
+      if(contains.call(usersList, currentUser) == true) {
+        remove(currentUser);
+      }
+      
+      io.sockets.emit('addUserToList', usersList);
+    });
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -52,4 +124,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+module.exports = {app: app, server: server};

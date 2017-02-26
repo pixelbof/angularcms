@@ -1,16 +1,171 @@
-<h1>Live Stream</h1>
 <div class="row">
-    <div class="col-md-9" ng-if="sunday == true && hour == true || sunday == true && time != true">
+    <div class="col-md-8" ng-if="sunday == true && hour == true">
+        <h1>Live Stream</h1>
         <script id="76581_c_421422" width="100%" height="400" src="//player.dacast.com/js/player.js"  class="dacast-video"></script>
     </div>
 
-    <div class="col-md-9" ng-if="sunday != true">
-        <p>It's not sunday but here is an old show</p>
-
+    <div class="col-md-8" ng-if="sunday == true && hour != true">
+        <h1>Live Stream</h1>
+        <div class="videoHolder">
+            <p>Here is something to keep you guys going until the show starts</p>
+            <iframe width="560" height="315" src="//www.youtube.com/embed/BMLk24Znd_Q?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+        </div>
     </div>
 
-    <div class="col-md-3" ng-if="loggedInUser && sunday == true && hour == true">chat area here</div>
-    <div class="col-md-3" ng-if="loggedInUser && sunday != true">Chat area is not open currently, please wait until Sunday at 6pm</div>
-    <div class="col-md-3" ng-if="loggedInUser && sunday == true && time != true">It is Sunday but we are not ready yet, hold on we are nearly there - believe me it will be worth the wait</div>
-    <div class="col-md-3" ng-if="!loggedInUser">Please log in or register to be able to chat</div>
+    <div class="col-md-4" ng-if="loggedInUser && sunday != true">Chat area is not open currently, please wait until Sunday at 6pm</div>
+    <div class="col-md-4" ng-if="!loggedInUser"><a href="/user/register">Register</a> or <a href="/admin/login">Login</a> to interact with the live show</div>
+    <div class="col-md-4" ng-if="loggedInUser && sunday == true && time != true">It is Sunday but we are not ready yet, hold on we are nearly there - believe me it will be worth the wait</div>
+
+    <!--<div class="col-md-3" ng-if="loggedInUser && sunday == true && hour == true">-->
+    <div class="tab-content col-md-4" ng-if="loggedInUser && sunday == true && hour == true">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="active">
+                <a href="#" data-tab="#messages" aria-controls="messages">Messages</a>
+            </li>
+            <li>
+                <a href="#" data-tab="#users" aria-controls="users">Connected Users</a>
+            </li>
+        </ul>
+
+        <hr />
+
+        <div class="tab-content col-md-12">
+            <div role="tabpanel" class="tab-pane active"  id="messages">
+                <div class="well message-container">
+                    <ul id="message-frame"></ul>
+                </div>
+
+                <div id="messageSend" data-user='{{loggedInUser}}'>Message:
+                    <div class="form-control" id="messageControl">
+                        <div id="message" class="col-md-9" contenteditable="true"></div>
+                        <div class="emojiList col-md-3"><img src="img/emoji-list/smiley.svg" width="100%" /></div>
+                    </div>
+
+                    <div class="col-md-12">
+                    <input id="sendIt" class="btn btn-success pull-right" type="submit" value="Send"/>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="well popoverContent" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane"  id="users">
+                <div class="well">
+                    <ul id="userList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!--SOCKET IO INTEGRATION-->
+
+<script>
+var socket = io.connect();
+var username;
+var message;
+var html;
+var emojis = ['angel', 
+            'devil', 
+            'angry', 
+            'cheeky', 
+            'crying', 
+            'cry-laugh', 
+            'embarrased', 
+            'eye-roll', 
+            'grin', 
+            'happy', 
+            'laugh', 
+            'love', 
+            'rofl', 
+            'sad', 
+            'shocked', 
+            'sick', 
+            'smiley', 
+            'thinking', 
+            'tongue-wink', 
+            'wink'];
+
+socket.on('welcome', function(data) {
+    username = $("#messageSend").data('user');
+    message = username + ' has just joined the chat!';
+    if(username !== undefined) {
+        socket.emit('newUser', {username: username});
+        socket.emit('newMessage', {message: message});
+    }
+});
+
+socket.on('addUserToList', function(_user) {
+    $("#userList").html("");
+
+    for(var i=0; i<_user.length; i++) {
+        $("#userList").prepend("<li><a href='user/profile/"+_user[i]+"' target='_blank'>"+_user[i]+"</a></li>")
+    }
+});
+
+socket.on('messageRecieve', function(data) {
+    addMessage(data)
+});
+
+socket.on('error', console.error.bind(console));
+
+function addMessage(messageData) {
+    $("#message-frame").prepend("<li>"+ messageData +"</li>");
+
+    $("#message-frame li").each(function() {
+        if($(this).find("span").data("user") == $("#messageSend").data("user")) {
+            $(this).addClass("myMessage");
+        }
+    });
+}
+
+$(document).ready(function() {
+    $("#messageSend #sendIt").on('click', function() {
+        var _message = $("#message").html();
+        $("#message").html("");
+        socket.emit('newMessage', {message: "<span data-user='"+username+"'>" + username + "</span>: " + _message});
+        event.preventDefault();
+    });
+
+    //emoji list
+    $(".emojiList img").on("click", function() {
+        if($(".popoverContent").attr("style")) {
+            if($(".popoverContent").children().length == 0) {
+                $.each(emojis, function(index, value) { 
+                    $(".popoverContent").append("<img width='30' src='img/emoji-list/"+ value +".svg' />");
+                });
+            }
+            $(".popoverContent").slideDown();
+        } else {
+            $(".popoverContent").slideUp();
+        }
+    });
+
+    $(".popoverContent img").click(function() {
+        var src=$(this).attr("src");
+        $("#message").append("<img height='25' src='"+src+"' />")
+    });
+
+    //nav tabs
+
+    $(".tab-content .tab-pane").hide();
+
+    $(".nav-tabs li").each(function() {
+        if($(this).hasClass("active")) {
+            $( ".tab-content " + $(this).children().data("tab") ).show();
+        }
+    });
+
+    $(".tab-content .nav-tabs a").click(function() {
+        event.preventDefault();
+        var location = $(this).data("tab");
+        $(".nav-tabs li").removeClass("active");
+        $(".tab-content .tab-pane").hide();
+
+        $(this).parent().addClass("active");
+        $( ".tab-content " + location ).show();
+    });
+});
+</script>

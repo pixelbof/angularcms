@@ -1,6 +1,7 @@
-<a href="admin/add-user/0" class="btn btn-success pull-right"> Add New User</a>
-<h1>Users List</h1>
+<a href="admin/add-user" class="btn btn-success pull-right"> Add New User</a>
+<h1>User List</h1>
 <hr/>
+
 <table class="table">
   <thead>
     <tr>
@@ -12,13 +13,17 @@
     </tr>
   </thead>
 
-  <tr ng-repeat="adminUser in allUsers">
-    <td>{{adminUser.username}}</td>
+  <tr ng-repeat="adminUser in allUsers | orderBy: 'userType'">
+    <td ng-if="adminUser.userType == 'user'"><a href="admin/user-profile/{{adminUser.username}}">{{adminUser.username}}</a></td>
+    <td ng-if="adminUser.userType == 'admin'">{{adminUser.username}}</td>
     <td>{{adminUser.userType}}</td>
-    <td>{{adminUser.dateAdded | date: "dd MMM yyyy 'at' h:mma"}}</td>
-    <td>{{adminUser.lastLogin | date: "dd MMM yyyy 'at' h:mma"}}</td>
+    <td>{{adminUser.dateAdded | date:'EEE dd MMM yy | h:mma'}}</td>
+    <td>{{adminUser.lastLogin | date:'EEE dd MMM yy | h:mma'}}</td>
     <td>{{adminUser.accountStatus}}</td>
-    <td> <a ng-href="#" ng-click="deleteUser(adminUser._id)">Delete</a>
+    <td> 
+      <a class="btn btn-danger" ng-href="#" ng-click="deleteUser(adminUser._id)">Delete</a>
+      <a class="btn btn-warning" ng-if="adminUser.accountStatus == 'active'" ng-href="#" ng-click="disableUser(adminUser._id)">Disable</a>
+      <a class="btn btn-success" ng-if="adminUser.accountStatus != 'active'" ng-href="#" ng-click="enableUser(adminUser._id)">Enable</a>
     </td>
   </tr>
 </table>

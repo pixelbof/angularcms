@@ -1,32 +1,59 @@
 /* app css stylesheet */
+@import url('https://fonts.googleapis.com/css?family=Old+Standard+TT');
 
-.menu {
-  list-style: none;
-  border-bottom: 0.1em solid black;
-  margin-bottom: 2em;
-  padding: 0 0 0.5em;
-}
-
-.menu:before {
-  content: "[";
-}
-
-.menu:after {
-  content: "]";
-}
-
-.menu > li {
-  display: inline;
-}
-
-.menu > li:before {
-  content: "|";
-  padding-right: 0.3em;
-}
-
-.menu > li:nth-child(1):before {
-  content: "";
+html, body {
   padding: 0;
+  margin: 0;
+}
+
+body {
+  color: #fff;
+  font-size: 14px;
+  font-family: 'Old Standard TT', serif;
+  background: url('../img/bgimage.jpg') #000 no-repeat center 30px;
+}
+
+.table {
+  background-color: rgba(255,255,255,0.8);
+  color: #262626;
+}
+
+.table a, .table a:hover {
+  color: #262626;
+}
+
+a {
+  color: #fff;
+  font-weight: bold;
+}
+
+.btn {
+  color: #fff !important;
+}
+
+a:hover {
+  color: #cccccc;
+}
+
+.nav-tabs {
+  border: 0;
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+.nav-tabs > li {
+  background:none;
+}
+
+.nav-tabs > li > a {
+  border: 0;
+  padding: 10px 7px;
+}
+
+.nav-tabs > li > a:hover, .nav-tabs > li > a:focus {
+  border: 0;
+  background-color: transparent;
+  color: #fff;
 }
 
 .profileImageHolder {
@@ -35,8 +62,37 @@
   border-radius: 60px;
   background-color: #cccccc;
   margin: 0 auto;
+  position: relative;
+  overflow: hidden;
 }
 
 .profileImageHolder img {
+  position: absolute;
   width: 100%;
+}
+
+#messageControl, .message-container {
+  min-height: 100px;
+  max-height: 100px;
+  overflow-y: scroll;
+}
+
+.message-container {
+  min-height: 200px;
+  max-height: 200px;
+}
+
+.emojiList {
+  cursor: pointer;
+}
+
+#message-frame, #userList {
+  padding: 0;
+}
+
+#message-frame li, #userList li {
+  padding: 5px;
+  margin: 5px 0;
+  background-color: #cccccc;
+  list-style-type: none;
 }

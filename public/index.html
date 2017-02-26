@@ -16,23 +16,27 @@
     <div class="container">
         <div admin-login class="col-md-3 pull-right"></div>
         <header>
-            <img ng-src="{{site.logo}}">
+            <div class="col-md-6"><a href="/home"><img ng-src="{{site.logo}}"></a></div>
+            <div class="col-md-6"><div class="col-md-12" nav-bar></div></div>
+            
         </header>
         <div message-flash></div>
         <div class="row">
-            <div class="col-md-12" nav-bar></div>
             <div class="col-md-10 col-md-offset-1" ng-view></div>
         </div>
         <hr />
-        <footer>Copyright <span date-now='yyyy'></span> Angular CMS</footer>
+        <footer>&copy; <span date-now='yyyy'></span> Houseology Studios</footer>
     </div>
 
     <!--BODY SCRIPTS-->
-
+    <script src="/socket.io/socket.io.js"></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/tinymce/tinymce.min.js"></script>
     <script src="bower_components/angular/angular.js"></script>
-    <script type="text/javascript" src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-ui-tinymce/src/tinymce.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-socket-io/socket.js"></script>
     <script src="js/app.js"></script>
     <script src="js/services.js"></script>
     <script src="js/controllers.js"></script>

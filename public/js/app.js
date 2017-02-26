@@ -11,8 +11,10 @@ angular.module('myApp', [
   'myApp.services',
   'myApp.directives',
   'myApp.controllers',
+  'ui.tinymce',
   'ngCookies',
-  'message.flash'
+  'message.flash',
+  'btford.socket-io'
 ]).
 config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
@@ -47,9 +49,17 @@ config(['$routeProvider', '$locationProvider',
             templateUrl: 'partials/admin/dashboard.html',
             controller: 'AdminDashboardCtrl'
         });
+        $routeProvider.when('/admin/user-profile/:user', {
+            templateUrl: 'partials/admin/user-profile.html',
+            controller: 'UserProfileCtrl'
+        });
         $routeProvider.when('/admin/user-list', {
             templateUrl: 'partials/admin/user-list.html',
             controller: 'AdminUserListCtrl'
+        });
+        $routeProvider.when('/admin/add-user', {
+            templateUrl: 'partials/admin/add-user.html',
+            controller: 'CentralRegisterCtrl'
         });
         $routeProvider.when('/admin/pages', {
             templateUrl: 'partials/admin/pages.html',

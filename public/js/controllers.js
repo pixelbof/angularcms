@@ -1,15 +1,33 @@
 'use strict';
 //GLOBAL CONTROLLERS FOR WHOLE APP
 angular.module('myApp.controllers', []).
-controller('AppCtrl', ['$scope', 'AuthService','flashMessageService','$location', '$cookies', 
-    function($scope,AuthService,flashMessageService,$location,$cookies) {
+controller('AppCtrl', ['$scope', '$rootScope', 'UserService','flashMessageService','$location', '$cookies', '$interval',
+    function($scope,$rootScope,UserService,flashMessageService,$location,$cookies,$interval) {
         $scope.site = {
-            logo: "img/angcms-logo.png"
+            logo: "img/houseology-logo.png"
         };
 
         $scope.location = $location['$$path'].split("/")[1];
         $scope.userType = $cookies.get('userType');
         $scope.user = $cookies.get('loggedInUser');
+
+        var disableCheck = $interval(function() {
+          UserService.checkAccountStatus($scope.user).then(
+          function(response) {
+            $rootScope.accountStatus = response.data.accountStatus;
+          });
+        }, 10000);
+        
+        $scope.$watch(function () {
+            return $rootScope.accountStatus;
+        }, function(value) {
+            if(value == 'disabled') {
+                $location.path("/");
+                $cookies.remove('userType', {path: '/'});
+                $cookies.remove('loggedInUser', {path: '/'});
+                flashMessageService.setMessage("The admin has disabled your account")
+            }
+        })
 
           if($scope.location == "admin" && $scope.userType == "user") {
             $location.path("/");
@@ -31,26 +49,28 @@ controller('AppCtrl', ['$scope', 'AuthService','flashMessageService','$location'
             console.log('error fetching data');
     });
 }]).
-controller('liveStream', ['$scope','AuthService','flashMessageService','$location',
-    function($scope,AuthService,flashMessageService,$location) {
+controller('liveStream', ['$scope','$cookies', 'AuthService','flashMessageService','$location', 'socket',
+    function($scope,$cookies,AuthService,flashMessageService,$location, socket) {
       var now = new Date();
+
+      $scope.loggedInUser = $cookies.get('loggedInUser');
 
       $scope.sunday = now.getDay() == 0;
       $scope.hour = now.getHours() >= 18;
-
-      //flashMessageService.setMessage("loading live stream");
+      
     }
 ]).
 controller('UserProfileCtrl', ['$scope','$cookies', 'UserService','flashMessageService','$location', '$log',
     function($scope,$cookies,UserService,flashMessageService,$location,$log) {
+        $scope.user = $location.path().split("/")[3];
 
-        UserService.getProfile($scope.loggedInUser).then(
+        UserService.getProfile($scope.user).then(
         function(response) {
           $scope.userProfile = {};
           $scope.userProfile = response.data;
 
-          if(response.data == "") {
-            $location.path('/user/update-profile')
+          if($scope.location != 'admin' && response.data == "") {
+              $location.path('/user/update-profile');
           }
         },
         function(err) {
@@ -78,22 +98,31 @@ function($scope, $timeout, $log, UserService, $routeParams, $location, flashMess
               console.log('Error: ', error);
             };
           }
-
-        UserService.getProfile($scope.loggedInUser).then(
-        function(response) {
-          $scope.userProfile = response.data;
-          $scope.userProfile.dob = new Date($scope.userProfile.dob);
-          $scope.userProfile.dateAdded = new Date($scope.userProfile.dateAdded);
-        },
-        function(err) {
-          $log.error(err);
-        });
+        
+        if(UserService.getProfile($scope.loggedInUser) != null) {
+          UserService.getProfile($scope.loggedInUser).then(
+          function(response) {
+            
+            if(response.data) {
+              $scope.userProfile = response.data;
+              $scope.userProfile.dob = new Date($scope.userProfile.dob);
+              $scope.userProfile.dateAdded = new Date($scope.userProfile.dateAdded);
+            }
+          },
+          function(err) {
+            $log.error(err);
+          });
+        }
 
         $scope.saveProfile = function() {
           var files = document.getElementById('profileImage').files;
-
           if(files.length > 0) {
-            getBase64(files[0])
+            if(files[0].size <= 700000) {
+              getBase64(files[0])
+            } else {
+              flashMessageService.setMessage("The file you supplied is over 700kb");
+              return false;
+            }
           }
 
           $timeout((function() {
@@ -117,8 +146,8 @@ function($scope, $timeout, $log, UserService, $routeParams, $location, flashMess
 
     }
 ]).
-controller('AdminUserListCtrl', ['$scope', '$log', 'UserService',
-  function($scope, $log, UserService) {
+controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'flashMessageService',
+  function($scope, $route, $log, UserService, flashMessageService) {
     UserService.getUsers().then(
       function(response) {
         $scope.allUsers = response.data;
@@ -126,6 +155,38 @@ controller('AdminUserListCtrl', ['$scope', '$log', 'UserService',
       function(err) {
         $log.error(err);
       });
+      
+    $scope.deleteUser = function(id) {
+        UserService.deleteUser(id).then(
+          function() {
+            flashMessageService.setMessage("User "+ id +" deleted Successfully");
+            $route.reload();
+          }, function(err) {
+            $log.error(err);
+          });
+      };
+
+      $scope.disableUser = function(id) {
+        UserService.disableUser(id).then(
+          function() {
+            flashMessageService.setMessage("User "+ id +" disabled Successfully");
+            $route.reload();
+          }, function(err) {
+            $log.error(err);
+          }
+        )
+      };
+
+      $scope.enableUser = function(id) {
+        UserService.enableUser(id).then(
+          function() {
+            flashMessageService.setMessage("User "+ id +" enabled Successfully");
+            $route.reload();
+          }, function(err) {
+            $log.error(err);
+          }
+        )
+      };
   }
 ]).
 controller('AdminPagesCtrl', ['$scope', '$route', '$log', 'pagesFactory', '$location', 'flashMessageService',
@@ -156,6 +217,25 @@ function($scope, $log, pagesFactory, $routeParams, $location, flashMessageServic
         $scope.updateURL=function(){
         $scope.pageContent.url=$filter('formatURL')($scope.pageContent.title);
       }
+
+      $scope.tinymceOptions = {
+        onChange: function(e) {
+          // put logic here for keypress and cut/paste changes
+        },
+        inline: false,
+        plugins : [
+          'advlist autolink lists link charmap preview hr anchor',
+          'searchreplace wordcount visualblocks visualchars code',
+          'insertdatetime nonbreaking table contextmenu',
+          'emoticons paste textcolor colorpicker textpattern codesample toc'
+          ],
+        toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link',
+        toolbar2: 'preview | forecolor backcolor emoticons | codesample',
+        code_dialog_height: 200,
+        skin: 'lightgray',
+        themes : 'modern',
+        browser_spellcheck: true
+      };
 
         if ($scope.pageContent._id !== 0) {
           $scope.heading = "Update Page";
@@ -192,6 +272,8 @@ function($scope, $log, pagesFactory, $routeParams, $location, flashMessageServic
         userType: '',
         accountStatus: 'active',
     };
+
+    $scope.userTypes = ['user', 'admin'];
 
     if($scope.location == "user") {
       $scope.newUser.userType = "user";
@@ -240,12 +322,12 @@ controller('CentralLoginCtrl', ['$scope', '$rootScope', '$location', '$cookies',
           function(res, err) {
             $cookies.put('loggedInUser', res.data.user);
             $cookies.put('userType', res.data.userType);
-
-            if(res.data.userType == "admin")
+            
+            if(res.data.userType == "admin"  && res.data.accountStatus == "active") {
                 $location.path('/admin/dashboard');
-            else if(res.data.userType == "user" && res.data.accountStatus == "active")
+            } else if(res.data.userType == "user" && res.data.accountStatus == "active") {
                 $location.path('/user/profile/'+ $cookies.get('loggedInUser'));
-            else if(res.data.accountStatus != "active") {
+            } else if(res.data.accountStatus != "active") {
                 $location.path('/');
                 flashMessageService.setMessage("Your account has been disabled by the admin, you are unable to login because of this");
             }
@@ -274,7 +356,6 @@ controller('CentralLogoutCtrl', ['$scope', '$location', '$cookies', 'AuthService
         }, 
         function(err) {
           console.log("error: " + JSON.stringify(err))
-            console.log('there was an error tying to logout');
         }
       );
 }])

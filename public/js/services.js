@@ -1,7 +1,18 @@
 'use strict';
 angular.module('myApp.services', [])
+.factory('socket', ['$rootScope', function ($rootScope) {
+    var socket = io.connect();
 
-.factory('pagesFactory', ['$http', '$location',
+  return {
+    on: function(eventName, callback){
+      socket.on(eventName, callback);
+    },
+    emit: function(eventName, data) {
+      socket.emit(eventName, data);
+    }
+  };
+  }]).
+  factory('pagesFactory', ['$http', '$location',
   function($http, $location) {
 
     return {
@@ -34,8 +45,20 @@ angular.module('myApp.services', [])
 .factory('UserService', ['$http', 
   function($http) {
     return {
+      checkAccountStatus: function(user) {
+        return $http.get('/api/get-user-single/' + user)
+      },
       getUsers: function(user) {
         return $http.get('/api/get-user');
+      },
+      deleteUser: function(id) {
+        return $http.get('/api/delete-user/' + id);
+      },
+      disableUser: function(id) {
+        return $http.post('/api/disable-user', {id: id});
+      },
+      enableUser: function(id) {
+        return $http.post('/api/enable-user', {id: id});
       },
       getProfile: function(user) {
         return $http.get('/api/get-profile/'+ user)

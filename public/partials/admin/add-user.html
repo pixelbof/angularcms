@@ -1,0 +1,22 @@
+<h1>Admin | Add a new user</h1>
+<hr/>
+
+<form role="form" id="login" ng-submit="checkUsername(newUser)">
+<div class="form-group">
+<label>Username</label>
+<input type="hidden" ng-model="newUser.userType" ng-value='user' />
+<input class="form-control" type="text" ng-model="newUser.username"/>
+</div>
+<div class="form-group">
+<label>Password</label>
+<input class="form-control" type="password"  ng-model="newUser.password"/>
+</div>
+
+<div class="form-group">
+    <label>User Type</label>
+    <select class="form-control" ng-model="newUser.userType" ng-options="x for x in userTypes"></select>
+</div>
+
+<input type="submit" class="btn btn-success" value="Create Account">
+</div>
+</form>
