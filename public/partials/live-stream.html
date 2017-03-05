@@ -17,7 +17,7 @@
     <div class="col-md-4" ng-if="loggedInUser && sunday == true && time != true">It is Sunday but we are not ready yet, hold on we are nearly there - believe me it will be worth the wait</div>
 
     <!--<div class="col-md-3" ng-if="loggedInUser && sunday == true && hour == true">-->
-    <div class="tab-content col-md-4" ng-if="loggedInUser && sunday == true && hour == true">
+    <div class="tab-content messageSection col-md-4" ng-if="loggedInUser && sunday == true && hour == true">
         <ul class="nav nav-tabs" role="tablist">
             <li class="active">
                 <a href="#" data-tab="#messages" aria-controls="messages">Messages</a>
@@ -27,23 +27,18 @@
             </li>
         </ul>
 
-        <hr />
-
-        <div class="tab-content col-md-12">
+        <div class="tab-content">
             <div role="tabpanel" class="tab-pane active"  id="messages">
                 <div class="well message-container">
                     <ul id="message-frame"></ul>
                 </div>
 
-                <div id="messageSend" data-user='{{loggedInUser}}'>Message:
+                <div id="messageSend" data-user='{{loggedInUser}}'>
                     <div class="form-control" id="messageControl">
                         <div id="message" class="col-md-9" contenteditable="true"></div>
                         <div class="emojiList col-md-3"><img src="img/emoji-list/smiley.svg" width="100%" /></div>
                     </div>
-
-                    <div class="col-md-12">
-                    <input id="sendIt" class="btn btn-success pull-right" type="submit" value="Send"/>
-                    </div>
+                    <input id="sendIt" class="btn btn-success" type="submit" value="Send"/>
 
                     <div class="col-md-12">
                         <div class="well popoverContent" style="display:none;"></div>
@@ -67,26 +62,27 @@ var socket = io.connect();
 var username;
 var message;
 var html;
-var emojis = ['angel', 
-            'devil', 
-            'angry', 
-            'cheeky', 
-            'crying', 
-            'cry-laugh', 
-            'embarrased', 
-            'eye-roll', 
-            'grin', 
-            'happy', 
-            'laugh', 
-            'love', 
-            'rofl', 
-            'sad', 
-            'shocked', 
-            'sick', 
-            'smiley', 
-            'thinking', 
-            'tongue-wink', 
-            'wink'];
+var emojis = ['angel.svg', 
+            'devil.svg', 
+            'angry.svg', 
+            'cheeky.svg', 
+            'crying.svg', 
+            'cry-laugh.svg', 
+            'embarrased.svg', 
+            'eye-roll.svg', 
+            'grin.svg', 
+            'happy.svg', 
+            'laugh.svg', 
+            'love.svg', 
+            'rofl.svg', 
+            'sad.svg', 
+            'shocked.svg', 
+            'sick.svg', 
+            'smiley.svg', 
+            'thinking.svg', 
+            'tongue-wink.svg', 
+            'wink.svg',
+            'bale-face.gif'];
 
 socket.on('welcome', function(data) {
     username = $("#messageSend").data('user');
@@ -129,23 +125,28 @@ $(document).ready(function() {
         event.preventDefault();
     });
 
+    $.each(emojis, function(index, value) {
+            $(".popoverContent").append("<img width='30' src='img/emoji-list/"+ value +"' />");
+    });
+
     //emoji list
     $(".emojiList img").on("click", function() {
         if($(".popoverContent").attr("style")) {
-            if($(".popoverContent").children().length == 0) {
-                $.each(emojis, function(index, value) { 
-                    $(".popoverContent").append("<img width='30' src='img/emoji-list/"+ value +".svg' />");
-                });
-            }
             $(".popoverContent").slideDown();
         } else {
             $(".popoverContent").slideUp();
         }
     });
 
-    $(".popoverContent img").click(function() {
+    $(".popoverContent img").on("click", function() {
         var src=$(this).attr("src");
-        $("#message").append("<img height='25' src='"+src+"' />")
+        console.log(src)
+        if(src == "img/emoji-list/bale-face.gif") {
+            $("#message").append("<img width='100%' src='"+src+"' />")    
+        } else {
+            $("#message").append("<img height='25' src='"+src+"' />")
+        }
+        
     });
 
     //nav tabs

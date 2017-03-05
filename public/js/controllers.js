@@ -227,10 +227,10 @@ function($scope, $log, pagesFactory, $routeParams, $location, flashMessageServic
           'advlist autolink lists link charmap preview hr anchor',
           'searchreplace wordcount visualblocks visualchars code',
           'insertdatetime nonbreaking table contextmenu',
-          'emoticons paste textcolor colorpicker textpattern codesample toc'
+          'emoticons paste textcolor colorpicker textpattern codesample toc image'
           ],
         toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link',
-        toolbar2: 'preview | forecolor backcolor emoticons | codesample',
+        toolbar2: 'preview | forecolor backcolor emoticons | codesample | image',
         code_dialog_height: 200,
         skin: 'lightgray',
         themes : 'modern',

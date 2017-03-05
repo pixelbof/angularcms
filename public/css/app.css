@@ -56,6 +56,33 @@ a:hover {
   color: #fff;
 }
 
+.messageSection .nav-tabs {
+  font-size: 15px;
+}
+
+.messageSection .nav-tabs li.active {
+  text-decoration: underline;
+  background-color: #fff;
+}
+
+.messageSection .nav-tabs li.active a {
+  color: #000;
+}
+
+.messageSection .nav-tabs li a, .messageSection .nav-tabs li a:hover, .messageSection .nav-tabs li a:focus {
+  background: none;
+  border: 0;
+}
+
+.messageSection .nav-tabs li a:hover {
+  background: none;
+  border: 0;
+}
+
+#sendIt {
+  width: 100%;
+}
+
 .profileImageHolder {
   width: 120px;
   height: 120px;
@@ -78,8 +105,8 @@ a:hover {
 }
 
 .message-container {
-  min-height: 200px;
-  max-height: 200px;
+  min-height: 300px;
+  max-height: 300px;
 }
 
 .emojiList {
