@@ -12,10 +12,10 @@ var users = require('./routes/users');
 var app = express();    
 
 var server = require('http').Server(app);
-var io = require('socket.io').listen(server);
+var io = require('socket.io')(server);
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/angcms');
+mongoose.connect('mongodb://localhost/HouseologyDB');
 var db = mongoose.connection;
 
 var api = require('./routes/api');
@@ -47,7 +47,7 @@ var remove = function(elem) {
   if (index >= 0) {
     arr.splice( index, 1 );
   }
-}
+}  
 
 var contains = function(needle) {
     // Per spec, the way to identify NaN is that it is not equal to itself
@@ -76,7 +76,7 @@ var contains = function(needle) {
     return indexOf.call(this, needle) > -1;
 };
 
-io.sockets.on('connection', function(socket) {
+io.on('connection', function(socket) {
     // Use socket to communicate with this particular client only, sending it it's own id
     socket.emit('welcome', { id: socket.id });
 
@@ -85,6 +85,9 @@ io.sockets.on('connection', function(socket) {
 
       if(contains.call(usersList, currentUser) != true && currentUser != null) {
         usersList.push(currentUser);
+      } else {
+        console.log("same user detected")
+        socket.emit('disconnect')
       }
 
       io.sockets.emit('addUserToList', usersList);
@@ -94,10 +97,16 @@ io.sockets.on('connection', function(socket) {
       io.sockets.emit('messageRecieve', data.message)
     });
 
-    socket.on('disconnection', function(data) {
-      if(currentUser !== undefined) {
-        io.emit('messageRecieve', currentUser + " has disconnected!");
+    socket.on('disconnect', function() {
+      if (io.sockets.connected[socket.id]) {
+          io.sockets.emit('messageRecieve', currentUser + " Has been disconnected from the chat server, reason : too many open connections, refresh this page to start chatting")
+          io.sockets.connected[socket.id].disconnect();
       }
+
+      if(currentUser !== undefined) {
+        socket.broadcast.emit('messageRecieve', currentUser + " has disconnected!");
+      }
+
       if(contains.call(usersList, currentUser) == true) {
         remove(currentUser);
       }

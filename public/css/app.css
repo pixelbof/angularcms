@@ -6,6 +6,10 @@ html, body {
   margin: 0;
 }
 
+.container {
+  padding-top: 20px;
+}
+
 body {
   color: #fff;
   font-size: 14px;
@@ -54,6 +58,15 @@ a:hover {
   border: 0;
   background-color: transparent;
   color: #fff;
+}
+
+#message {
+  height: 100%;
+  padding: 0 10px;
+}
+
+.myMessage {
+
 }
 
 .messageSection .nav-tabs {
@@ -121,5 +134,14 @@ a:hover {
   padding: 5px;
   margin: 5px 0;
   background-color: #cccccc;
+  color: #000;
   list-style-type: none;
+}
+
+#message-frame li.myMessage {
+  background-color: #ff9900;
+}
+
+#userList li a {
+  color: #000;
 }

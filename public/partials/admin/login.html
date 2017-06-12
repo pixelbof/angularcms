@@ -1,18 +1,32 @@
 <h1>Login</h1>
 <hr/>
 
+<div class="col-md-6">
 <form role="form" id="login" ng-submit="login(credentials)">
 
 <div class="form-group">
 <label>Username</label>
 
-<input class="form-control" type="text" ng-model="credentials.username"/>
+<input class="form-control" type="text" ng-model="credentials.username" required/>
 </div>
 <div class="form-group">
 <label>Password</label>
-<input class="form-control" type="password"  ng-model=" credentials.password"/>
+<input class="form-control" type="password"  ng-model=" credentials.password" required/>
 </div>
 
 <input type="submit" class="btn btn-success" value="Login">
 </div>
 </form>
+</div>
+
+<div class="col-md-6">
+<h2>Site Updates:</h2>
+<p>Listed here are the updates to the website</p>
+<p><strong>Last updated: 04/06/2017 14:30pm</strong></p>
+<ul>
+    <li>Addition of Emojis in live chat</li>
+    <li>Addition of bale faces in live chat</li>
+    <li>Form field validation</li>
+    <li>Live video size increased</li>
+</ul>
+</div>
