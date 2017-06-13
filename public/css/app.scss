@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css?family=Old+Standard+TT');
+
+body {
+    background-color: #000;
+    color: #fff;
+    font-size: 14px;
+    font-family: 'Old Standard TT', serif;
+}
+
+a {
+    color: inherit;
+
+    &:visited {
+        color: inherit;
+    }
+
+}
+
+header {
+    .col-sm-12 {
+        padding: 0;
+    }
+}
+
+.navbar {
+    &.navbar-inverse {
+        background-image: none !important;
+
+        .navbar-nav {
+            &>li {
+                &>a {
+                    color: #fff;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+
+    background-color: #000;
+}
+
+#message {
+    min-height: 104px;
+    max-height: 104px;
+    overflow-y: auto;
+    border: 1px solid #fff;
+    outline: 0;
+}
+
+#messageSend {
+    position: relative;
+
+    .emojiList {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+}
+
+.messageSection {
+    .nav-tabs {
+        border-bottom: 0;
+    }
+}
+
+.message-container, .userList {
+    @extend #message;
+    background: none;
+    min-height: 336px;
+    max-height: 336px;
+}
+
+.emojiList {
+    margin-top: 15px;
+}
