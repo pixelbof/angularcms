@@ -4,7 +4,7 @@
         <script id="76581_c_421422" width="100%" height="420" src="//player.dacast.com/js/player.js"  class="dacast-video"></script>
     </div>
 
-    <div class="col-md-8" ng-if="sunday == true && hour != true">
+    <div class="col-md-8" ng-if="sunday != true || hour != true">
         <h1>Live Stream</h1>
         <div class="videoHolder">
             <p>Here is something to keep you guys going until the show starts</p>
@@ -16,7 +16,7 @@
     <div class="col-md-4" ng-if="!loggedInUser"><a href="/user/register">Register</a> or <a href="/admin/login">Login</a> to interact with the live show</div>
     <div class="col-md-4" ng-if="loggedInUser && sunday == true && hour != true">It is Sunday but we are not ready yet, hold on we are nearly there - believe me it will be worth the wait</div>
 
-    <div class="tab-content messageSection col-md-4" ng-if="loggedInUser && sunday == true && hour == true">
+    <div class="tab-content messageSection col-md-4"> <!--ng-if="loggedInUser && sunday == true && hour == true"-->
         <ul class="nav nav-tabs" role="tablist">
             <li class="active">
                 <a href="#" data-tab="#messages" aria-controls="messages">Messages</a>
@@ -32,12 +32,15 @@
                     <ul id="message-frame"></ul>
                 </div>
 
-                <div id="messageSend" data-user='{{loggedInUser}}'>
-                    <div class="form-control" id="messageControl">
+                <div id="messageSend" data-user='{{loggedInUser}}' data-usertype='{{userType}}'>
+                    <div id="messageControl">
                         <div id="message" class="col-md-9" contenteditable="true"></div>
-                        <div class="emojiList col-md-3"><img src="img/emoji-list/smiley.svg" width="100%" /></div>
+                        <div class="col-md-3">
+                            <div class="emojiList"><img src="img/emoji-list/smiley.svg" width="100%" /></div>
+                            <input id="sendIt" class="btn btn-success" type="submit" value="Send"/>
+                        </div>
                     </div>
-                    <input id="sendIt" class="btn btn-success" type="submit" value="Send"/>
+                    
 
                     <div class="col-md-12">
                         <div class="well popoverContent" style="display:none;"></div>
@@ -46,7 +49,7 @@
             </div>
 
             <div role="tabpanel" class="tab-pane"  id="users">
-                <div class="well">
+                <div class="well userList">
                     <ul id="userList"></ul>
                 </div>
             </div>
@@ -59,6 +62,7 @@
 <script>
 var socket = io.connect();
 var username;
+var usertype;
 var message;
 var html;
 var emojis = ['angel.svg', 
@@ -85,6 +89,7 @@ var emojis = ['angel.svg',
 
 socket.on('welcome', function(data) {
     username = $("#messageSend").data('user');
+    usertype= $("#messageSend").data('usertype');
     message = username + ' has just joined the chat!';
     if(username !== undefined) {
         socket.emit('newUser', {username: username});
@@ -113,14 +118,29 @@ function addMessage(messageData) {
         if($(this).find("span").data("user") == $("#messageSend").data("user")) {
             $(this).addClass("myMessage");
         }
+
+        if($(this).find("span").data("usertype") == "admin") {
+            var strCont = $(this).html();
+            if(strCont.indexOf("*Admin*") == -1) {
+                $(this).prepend("*Admin* ")
+            }
+            $(this).addClass("adminMessage");
+        }
     });
 }
 
 $(document).ready(function() {
+
+    $("#messageSend").keydown(function(event) {
+        if(event.keyCode == 13) {
+            $("#sendIt").trigger("click");
+        }
+    });
+
     $("#messageSend #sendIt").on('click', function() {
         var _message = $("#message").html();
         $("#message").html("");
-        socket.emit('newMessage', {message: "<span data-user='"+username+"'>" + username + "</span>: " + _message});
+        socket.emit('newMessage', {message: "<span data-user='"+username+"' data-usertype='"+usertype+"'>" + username + "</span>: " + _message});
         event.preventDefault();
     });
 

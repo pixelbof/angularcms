@@ -1,11 +1,11 @@
-<div ng-if="loggedInUser && userType == 'admin'">
+<div ng-if="loggedInUser && userType == 'admin'" class="pull-right">
     Welcome {{loggedInUser}} |  <a href="admin/dashboard">My Admin</a> | <a href="admin/logout">Logout</a>
 </div>
 
-<div ng-if="loggedInUser && userType == 'user'">
+<div ng-if="loggedInUser && userType == 'user'"  class="pull-right">
     Welcome {{loggedInUser}} |  <a href="user/profile/{{loggedInUser}}">My Profile</a> | <a href="admin/logout">Logout</a>
 </div>
 
-<div ng-if="!loggedInUser">
+<div ng-if="!loggedInUser"  class="pull-right">
     <a href="user/register">Register</a> | <a href="admin/login">Login</a>
 </div>

@@ -54,6 +54,7 @@ controller('liveStream', ['$scope','$cookies', 'AuthService','flashMessageServic
       var now = new Date();
 
       $scope.loggedInUser = $cookies.get('loggedInUser');
+      $scope.userType = $cookies.get('userType');
 
       $scope.sunday = now.getDay() == 0;
       $scope.hour = now.getHours() >= 13;
