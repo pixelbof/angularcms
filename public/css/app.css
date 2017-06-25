@@ -6,6 +6,21 @@ body {
   font-family: 'Old Standard TT', serif;
 }
 
+@media screen and (max-width: 320px) {
+  body {
+    background-image: none;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  body {
+    background-image: url("../img/bgimage.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top center;
+  }
+}
+
 a {
   color: inherit;
 }
@@ -14,12 +29,9 @@ a:visited {
   color: inherit;
 }
 
-header .col-sm-12 {
-  padding: 0;
-}
-
 .navbar {
-  background-color: #000;
+  background: rgba(0, 0, 0, 0.6);
+  border: 0;
 }
 
 .navbar.navbar-inverse {
@@ -40,6 +52,8 @@ header .col-sm-12 {
   overflow-y: auto;
   border: 1px solid #fff;
   outline: 0;
+  background-color: #000;
+  margin-bottom: 20px;
 }
 
 #messageSend {
@@ -58,8 +72,19 @@ header .col-sm-12 {
 
 .message-container, .userList {
   background: none;
+  background-color: #000;
   min-height: 336px;
   max-height: 336px;
+}
+
+.emojiBtn {
+  cursor: pointer;
+}
+
+@media screen and (min-width: 1200px) {
+  .emojiBtn {
+    margin-bottom: 41px;
+  }
 }
 
 .emojiList {

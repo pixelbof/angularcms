@@ -1,10 +1,25 @@
 @import url('https://fonts.googleapis.com/css?family=Old+Standard+TT');
+//variables
+$break-small: 320px;
+$break-large: 1200px;
 
+//Global setting styles
 body {
     background-color: #000;
     color: #fff;
     font-size: 14px;
     font-family: 'Old Standard TT', serif;
+
+    @media screen and (max-width: $break-small) {
+        background-image: none;
+    }
+
+    @media screen and (min-width: $break-large) {
+        background-image: url('../img/bgimage.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: top center;
+    }
 }
 
 a {
@@ -14,12 +29,6 @@ a {
         color: inherit;
     }
 
-}
-
-header {
-    .col-sm-12 {
-        padding: 0;
-    }
 }
 
 .navbar {
@@ -39,8 +48,11 @@ header {
         }
     }
 
-    background-color: #000;
+    background:rgba(0,0,0,0.6);
+    border: 0;
 }
+
+//Site specific styles
 
 #message {
     min-height: 104px;
@@ -48,6 +60,8 @@ header {
     overflow-y: auto;
     border: 1px solid #fff;
     outline: 0;
+    background-color: #000;
+    margin-bottom: 20px;
 }
 
 #messageSend {
@@ -69,8 +83,16 @@ header {
 .message-container, .userList {
     @extend #message;
     background: none;
+    background-color: #000;
     min-height: 336px;
     max-height: 336px;
+}
+
+.emojiBtn {
+    cursor: pointer;
+    @media screen and (min-width: $break-large) {
+        margin-bottom: 41px;
+    }
 }
 
 .emojiList {

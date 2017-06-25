@@ -298,9 +298,13 @@ function($scope, $log, pagesFactory, $routeParams, $location, flashMessageServic
       UserRegisterService.addUser($scope.newUser).then(
       function(response) {
         flashMessageService.setMessage("New user added successfully");
-        var newUserScope = $scope.$new();
-        $controller('CentralLoginCtrl', {$scope : newUserScope});
-        newUserScope.login($scope.newUser);
+        if($scope.userType != "admin") {
+          var newUserScope = $scope.$new();
+          $controller('CentralLoginCtrl', {$scope : newUserScope});
+          newUserScope.login($scope.newUser);
+        } else {
+          $location.path('/admin/user-list');
+        }
       },
       function(err) {
         $log.error(err);
