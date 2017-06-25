@@ -36,10 +36,18 @@ a {
         background-image: none !important;
 
         .navbar-nav {
+            &.mainNav {
+                li {
+                    a {
+                        font-weight: bold;
+                        font-size: 1.2em;
+                    }
+                }
+            }
             &>li {
                 &>a {
                     color: #fff;
-
+                    padding: 10px 0 0 20px;
                     &:hover {
                         text-decoration: underline;
                     }

@@ -1,8 +1,14 @@
-<ul class="navbar-right nav navbar-nav">
-<li ng-repeat="nav in navLinks | orderBy:'menuIndex'"> <a href="/{{nav.url}}">{{nav.title}}</a>
-</li>
-<li><a href="/live">Live Stream</a></li>
-<li><a href="http://podcast.houseologylive.co.uk">Podcasts</a></li>
-<li><a href="//shop.houseologylive.co.uk" target="_blank">Shop</a></li>
+<div class="col-md-8 pull-right">
+    <ul class="navbar-right nav navbar-nav clearfix secondNav">
+        <li><a href="/live">Live Stream</a></li>
+        <li><a href="http://podcast.houseologylive.co.uk">Podcasts</a></li>
+        <li><a href="//shop.houseologylive.co.uk" target="_blank">Shop</a></li>
+    </ul>
+</div>
 
-</ul>
+<div class="col-md-8 pull-right">
+    <ul class="navbar-right nav navbar-nav mainNav">
+        <li ng-repeat="nav in navLinks | orderBy:'menuIndex'"> <a href="/{{nav.url}}">{{nav.title}}</a>
+        </li>
+    </ul>
+</div>

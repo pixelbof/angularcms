@@ -38,8 +38,14 @@ a:visited {
   background-image: none !important;
 }
 
+.navbar.navbar-inverse .navbar-nav.mainNav li a {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
 .navbar.navbar-inverse .navbar-nav > li > a {
   color: #fff;
+  padding: 10px 0 0 20px;
 }
 
 .navbar.navbar-inverse .navbar-nav > li > a:hover {
