@@ -2,7 +2,7 @@
 
 
 <!-- Step 1: Create the containing elements. -->
-<div id="active-users-container"></div>
+<section id="active-users-container"></section>
 
 <section id="auth-button"></section>
 <section id="view-selector"></section>
@@ -64,6 +64,7 @@ gapi.analytics.ready(function() {
 
   gapi.analytics.auth.on('success', function(response) {
     viewSelector.execute();
+    activeUsers.set(data).execute();
   });
 
   viewSelector.on('change', function(ids) {
