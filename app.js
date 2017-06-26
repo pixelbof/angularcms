@@ -15,7 +15,8 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/houseology');
+app.get('env') === 'development' ? mongoose.connect('mongodb://localhost:27017/houseology') : mongoose.connect('mongodb://dbConnectorUser:Starwars2651UK@ds011432.mlab.com:11432/heroku_5dpg132q');
+
 var db = mongoose.connection;
 
 var api = require('./routes/api');

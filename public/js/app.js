@@ -13,8 +13,7 @@ angular.module('myApp', [
   'myApp.controllers',
   'ui.tinymce',
   'ngCookies',
-  'message.flash',
-  'btford.socket-io'
+  'message.flash'
 ]).
 config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {

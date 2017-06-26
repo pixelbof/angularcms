@@ -16,7 +16,7 @@
     <div class="col-md-4" ng-if="!loggedInUser"><a href="/user/register">Register</a> or <a href="/admin/login">Login</a> to interact with the live show</div>
     <div class="col-md-4" ng-if="loggedInUser && sunday == true && hour != true">It is Sunday but we are not ready yet, hold on we are nearly there - believe me it will be worth the wait</div>
 
-    <div class="tab-content messageSection col-md-4 col-sm-12"> <!--ng-if="loggedInUser && sunday == true && hour == true"-->
+    <div class="tab-content messageSection col-md-4 col-sm-12" ng-if="loggedInUser && sunday == true && hour == true"> <!--ng-if="loggedInUser && sunday == true && hour == true"-->
         <ul class="nav nav-tabs" role="tablist">
             <li class="active">
                 <a href="#" data-tab="#messages" aria-controls="messages">Messages</a>
@@ -35,13 +35,13 @@
                 <div id="messageSend" data-user='{{loggedInUser}}' data-usertype='{{userType}}'>
                     <div id="messageControl" class="clearfix">
                         <div id="message" class="col-md-9" contenteditable="true"></div>
-                        <div class="col-md-3 col-sm-12">
-                            <div class="emojiBtn col-sm-6 col-md-12"><img src="img/emoji-list/smiley.svg" width="100%" /></div>
-                            <input id="sendIt" class="btn btn-success col-md-12" type="submit" value="Send"/>
+                        <div class="col-md-3 col-sm-12 col-xs-12">
+                            <div class="emojiBtn col-xs-3 col-sm-6 col-md-12"><img src="img/emoji-list/smiley.svg" width="100%" /></div>
+                            <input id="sendIt" class="btn btn-success col-xs-9 col-md-12 col-sm-6" type="submit" value="Send"/>
                         </div>
                     </div>
                     
-                    <div class="col-md-9 emojiList">
+                    <div class="col-md-9 col-xs-6 emojiList">
                         <div class="well popoverContent" style="display:none;"></div>
                     </div>
                 </div>
@@ -57,6 +57,7 @@
 </div>
 
 <!--SOCKET IO INTEGRATION-->
+<script src="/socket.io/socket.io.js"></script>
 
 <script>
 var socket = io.connect();
