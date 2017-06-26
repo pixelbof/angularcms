@@ -87,7 +87,6 @@ io.on('connection', function(socket) {
       if(contains.call(usersList, currentUser) != true && currentUser != null) {
         usersList.push(currentUser);
       } else {
-        console.log("same user detected")
         socket.emit('disconnect')
       }
 
