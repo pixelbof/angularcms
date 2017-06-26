@@ -2,11 +2,15 @@
 
 
 <!-- Step 1: Create the containing elements. -->
+<div id="active-users-container"></div>
+
 <section id="auth-button"></section>
 <section id="view-selector"></section>
 <section id="timeline"></section>
 
 <!-- Step 2: Load the library. -->
+
+<script type="text/javascript" src="//ga-dev-tools.appspot.com/public/javascript/embed-api/components/active-users.js"></script>
 
 <script>
 (function(w,d,s,g,js,fjs){
@@ -33,6 +37,11 @@ gapi.analytics.ready(function() {
 
   var viewSelector = new gapi.analytics.ViewSelector({
     container: 'view-selector'
+  });
+
+   var activeUsers = new gapi.analytics.ext.ActiveUsers({
+    container: 'active-users-container',
+    pollingInterval: 5
   });
 
   // Step 5: Create the timeline chart.
@@ -64,6 +73,7 @@ gapi.analytics.ready(function() {
       }
     }
     timeline.set(newIds).execute();
+    activeUsers.set(data).execute();
   });
 });
 </script>
