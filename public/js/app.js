@@ -1,6 +1,6 @@
 'use strict';
 navigator.serviceWorker.getRegistrations().then(function(registrations) {
- for(let registration of registrations) {
+ for(var registration of registrations) {
   registration.unregister()
 } })
 
