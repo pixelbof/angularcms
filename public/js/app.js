@@ -1,8 +1,4 @@
 'use strict';
-navigator.serviceWorker.getRegistrations().then(function(registrations) {
- for(var registration of registrations) {
-  registration.unregister()
-} })
 
 // Declare app level module which depends on filters, and services
 angular.module('myApp', [
