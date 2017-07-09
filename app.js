@@ -87,7 +87,7 @@ io.on('connection', function(socket) {
       if(contains.call(usersList, currentUser) != true && currentUser != null) {
         usersList.push(currentUser);
       } else {
-        socket.emit('disconnect')
+        //socket.emit('disconnect')
       }
 
       io.sockets.emit('addUserToList', usersList);
@@ -99,12 +99,12 @@ io.on('connection', function(socket) {
 
     socket.on('disconnect', function() {
       if (io.sockets.connected[socket.id]) {
-          io.sockets.emit('messageRecieve', currentUser + " Has been disconnected from the chat server, reason : too many open connections, refresh this page to start chatting")
+          //io.sockets.emit('messageRecieve', currentUser + " Has been disconnected from the chat server, reason : too many open connections, refresh this page to start chatting")
           io.sockets.connected[socket.id].disconnect();
       }
 
       if(currentUser !== undefined) {
-        socket.broadcast.emit('messageRecieve', currentUser + " has disconnected!");
+        //socket.broadcast.emit('messageRecieve', currentUser + " has disconnected!");
       }
 
       if(contains.call(usersList, currentUser) == true) {
