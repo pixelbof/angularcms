@@ -127,10 +127,19 @@ a {
 
 .message-container, .userList {
     @extend #message;
+    position: relative;
     background: none;
     background-color: #000;
     min-height: 336px;
     max-height: 336px;
+
+        .userTyping {
+            width: 60%;
+            position: absolute;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.8);
+            display: none;
+        }
 }
 
 .emojiBtn {

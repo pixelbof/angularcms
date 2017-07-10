@@ -110,10 +110,19 @@ a:visited {
 }
 
 .message-container, .userList {
+  position: relative;
   background: none;
   background-color: #000;
   min-height: 336px;
   max-height: 336px;
+}
+
+.message-container .userTyping, .userList .userTyping {
+  width: 60%;
+  position: absolute;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: none;
 }
 
 .emojiBtn {

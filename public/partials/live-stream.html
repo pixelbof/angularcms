@@ -30,6 +30,7 @@
             <div role="tabpanel" class="tab-pane active"  id="messages">
                 <div class="well message-container">
                     <ul id="message-frame"></ul>
+                    <div class="userTyping">user is typing...</div>
                 </div>
 
                 <div id="messageSend" data-user='{{loggedInUser}}' data-usertype='{{userType}}'>
@@ -97,6 +98,15 @@ socket.on('welcome', function(data) {
     }
 });
 
+socket.on('userTyping', function(user) {
+    console.log(user + " is typing");
+    $(".userTyping").show().html(user + " is typing...");
+
+    setTimeout(function() {
+        $(".userTyping").hide();
+    }, 2000);
+});
+
 socket.on('userList update', function(_user) {
     $("#userList").html("");
 
@@ -132,7 +142,11 @@ function addMessage(messageData) {
 $(document).ready(function() {
 
     $("#messageSend").keydown(function(event) {
-        if(event.keyCode == 13 && $("#message").html() != "") {
+       socket.emit("userTyping", username);
+    });
+
+    $("#messageSend").keydown(function(event) {
+        if(event.keyCode == 13) {
             $("#sendIt").trigger("click");
         }
     });
