@@ -82,6 +82,43 @@ a {
     }
 }
 
+#message-frame {
+    padding-left: 0;
+
+    li {
+        list-style-type: none;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        padding: 5px 10px;
+        background-color: #006699;
+        float: left;
+        min-width: 65%;
+        max-width: 65%;
+
+        &.myMessage {
+            float: right;
+            background-color: #ff6600;
+        }
+
+        &.adminMessage {
+            background-color: #660033;
+        }
+
+        span {
+            font-weight: bold;
+        }
+        
+        .time {
+            text-align: right;
+            font-size: 12px;
+        }
+    }
+}
+
+#userList {
+    @extend #message-frame;
+}
+
 .messageSection {
     .nav-tabs {
         border-bottom: 0;

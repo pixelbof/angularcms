@@ -16,14 +16,14 @@
     <div class="col-md-4" ng-if="!loggedInUser"><a href="/user/register">Register</a> or <a href="/admin/login">Login</a> to interact with the live show</div>
     <div class="col-md-4" ng-if="loggedInUser && sunday == true && hour != true">It is Sunday but we are not ready yet, hold on we are nearly there - believe me it will be worth the wait</div>
 
-    <div class="tab-content messageSection col-md-4 col-sm-12" ng-if="loggedInUser && sunday == true && hour == true"> <!--ng-if="loggedInUser && sunday == true && hour == true"-->
+    <div class="tab-content messageSection col-md-4 col-sm-12" ng-if="loggedInUser"> <!--ng-if="loggedInUser && sunday == true && hour == true"-->
         <ul class="nav nav-tabs" role="tablist">
             <li class="active">
                 <a href="#" data-tab="#messages" aria-controls="messages">Messages</a>
             </li>
-            <li>
-                <a href="#" data-tab="#users" aria-controls="users">Connected Users <span class="userCount"></span></a>
-            </li>
+            <!--<li>
+                <a href="#" data-tab="#users" aria-controls="users" ng-if="userType == 'admin'">Connected Users <span class="userCount"></span></a>
+            </li>-->
         </ul>
 
         <div class="tab-content">
@@ -47,11 +47,11 @@
                 </div>
             </div>
 
-            <div role="tabpanel" class="tab-pane"  id="users">
+            <!--<div role="tabpanel" class="tab-pane"  id="users">
                 <div class="well userList">
                     <ul id="userList"></ul>
                 </div>
-            </div>
+            </div>-->
         </div>
     </div>
 </div>
@@ -60,7 +60,7 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
-var socket = io.connect();
+var socket = io.connect('https://houseologychat.herokuapp.com', {path: '/socket.io/'});
 var username;
 var usertype;
 var message;
@@ -93,25 +93,23 @@ socket.on('welcome', function(data) {
     message = username + ' has just joined the chat!';
     if(username !== undefined) {
         socket.emit('newUser', {username: username});
-        socket.emit('newMessage', {message: message});
+        socket.emit('chat message', {message: message});
     }
 });
 
-socket.on('addUserToList', function(_user) {
+socket.on('userList update', function(_user) {
     $("#userList").html("");
 
     for(var i=0; i<_user.length; i++) {
-        $("#userList").html("<li><a href='user/profile/"+_user[i]+"' target='_blank'>"+_user[i]+"</a></li>");
+        $("#userList").append("<li><a href='user/profile/"+_user[i]+"' target='_blank'>"+_user[i]+"</a></li>");
     }
 
     $(".userCount").html(_user.length)
 });
 
-socket.on('messageRecieve', function(data) {
+socket.on('chat message', function(data) {
     addMessage(data)
 });
-
-socket.on('error', console.error.bind(console));
 
 function addMessage(messageData) {
     $("#message-frame").prepend("<li>"+ messageData +"</li>");
@@ -124,7 +122,7 @@ function addMessage(messageData) {
         if($(this).find("span").data("usertype") == "admin") {
             var strCont = $(this).html();
             if(strCont.indexOf("*Admin*") == -1) {
-                $(this).prepend("*Admin* ")
+                $(this).find("span").prepend("*Admin* ")
             }
             $(this).addClass("adminMessage");
         }
@@ -140,10 +138,15 @@ $(document).ready(function() {
     });
 
     $("#messageSend #sendIt").on('click', function() {
+        var date = new Date();
+        var h = date.getHours(),
+        m = (date.getMinutes()<10?'0':'') + date.getMinutes(),
+        s = date.getSeconds();
+
         var _message = $("#message").html();
         $("#message").html("");
         if(_message != "") {
-            socket.emit('newMessage', {message: "<span data-user='"+username+"' data-usertype='"+usertype+"'>" + username + "</span>: " + _message});
+            socket.emit('chat message', {message: "<span data-user='"+username+"' data-usertype='"+usertype+"'>" + username + "</span><br />" + _message + "<div class='time'>@"+ h + ":" + m + ":" + s +"</div>"});
         }
         event.preventDefault();
     });

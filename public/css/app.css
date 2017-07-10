@@ -72,6 +72,39 @@ a:visited {
   left: 0;
 }
 
+#message-frame, #userList {
+  padding-left: 0;
+}
+
+#message-frame li, #userList li {
+  list-style-type: none;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background-color: #006699;
+  float: left;
+  min-width: 65%;
+  max-width: 65%;
+}
+
+#message-frame li.myMessage, #userList li.myMessage {
+  float: right;
+  background-color: #ff6600;
+}
+
+#message-frame li.adminMessage, #userList li.adminMessage {
+  background-color: #660033;
+}
+
+#message-frame li span, #userList li span {
+  font-weight: bold;
+}
+
+#message-frame li .time, #userList li .time {
+  text-align: right;
+  font-size: 12px;
+}
+
 .messageSection .nav-tabs {
   border-bottom: 0;
 }
