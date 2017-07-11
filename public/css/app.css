@@ -145,3 +145,20 @@ a:visited {
 .emojiList {
   margin-top: 15px;
 }
+
+.vodContainer {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.player {
+  max-height: 362px;
+  max-width: 642px;
+  min-height: 362px;
+  min-width: 642px;
+  border: 1px solid #fff;
+  background-image: url("https://images.dacast.com/76581/sf-429337-1.png?1499737088");
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 0;
+}

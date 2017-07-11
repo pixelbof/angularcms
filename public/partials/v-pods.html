@@ -24,7 +24,7 @@
 $(document).ready(function() {
     $(".vodContainer").on("click", "img", function() {
 
-        $(".player").html("<iframe src='"+ $(this).data("videolink") +"' width='"+ $(this).data("width") +"' height='"+$(this).data("height")+"' frameborder='0'></iframe>")
+        $(".player").html("<iframe allowfullscreen='true' src='"+ $(this).data("videolink") +"' width='"+ $(this).data("width") +"' height='"+$(this).data("height")+"' frameborder='0'></iframe>")
     });
 });
 </script>

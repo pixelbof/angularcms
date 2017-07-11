@@ -49,8 +49,10 @@ controller('AppCtrl', ['$scope', '$rootScope', 'UserService','flashMessageServic
             console.log('error fetching data');
     });
 }]).
-controller('v-pods', ['$scope','vodFactory', '$routeParams', '$sce', 
-    function($scope, vodFactory, $routeParams,$sce) {
+controller('v-pods', ['$scope','$cookies', 'vodFactory', '$routeParams', '$sce', 
+    function($scope, $cookies, vodFactory, $routeParams,$sce) {
+    $scope.loggedInUser = $cookies.get('loggedInUser');
+
      vodFactory.getAllVods().then(
         function(response) {
             $scope.vodContent = response.data;
