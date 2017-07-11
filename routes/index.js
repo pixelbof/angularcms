@@ -12,7 +12,4 @@ router.get('*', function(request, response) {
     response.sendfile(path.resolve('./public/index.html'));
 });
 
-/*Live Chat feature */
-
-
 module.exports = router;

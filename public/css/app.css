@@ -105,6 +105,13 @@ a:visited {
   font-size: 12px;
 }
 
+#message-frame li.systemMessageContainer, #userList li.systemMessageContainer {
+  background-color: #999999;
+  color: #000;
+  min-width: 100%;
+  max-width: 100%;
+}
+
 .messageSection .nav-tabs {
   border-bottom: 0;
 }

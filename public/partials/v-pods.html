@@ -1,0 +1,30 @@
+<h1>Houseology V-Pods</h1>
+<p>Welcome to Houseology's V-Pods, watch every show whenever and wherever you want to, completely on demand, for you.</p>
+
+<hr />
+
+<div class="col-md-5 vodContainer">
+    <div class="vodItem" ng-repeat="vod in vodContent.data">
+        <img class="col-md-6" src="{{vod.pictures.splashscreen[0]}}" data-videolink="{{vod.share_code.facebook}}" data-width="{{vod.video_width}}" data-height="{{vod.video_height}}" />
+        <div class="col-md-6">
+            <strong>{{vod.title}}</strong>
+            <br /><br />
+            <div>{{vod.save_date}}</div>
+        </div>
+
+        <hr class="col-md-11" />
+    </div>
+</div>
+
+<div class="col-md-7 player">
+    &nbsp;
+</div>
+
+<script>
+$(document).ready(function() {
+    $(".vodContainer").on("click", "img", function() {
+
+        $(".player").html("<iframe src='"+ $(this).data("videolink") +"' width='"+ $(this).data("width") +"' height='"+$(this).data("height")+"' frameborder='0'></iframe>")
+    });
+});
+</script>

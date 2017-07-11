@@ -1,25 +1,25 @@
 'use strict';
 angular.module('myApp.services', [])
-.factory('socket', ['$rootScope', function ($rootScope) {
-    var socket = io.connect();
+.factory('vodFactory', ['$http', '$location',
+  function($http, $location) {
+    var baseURL = "https://api.dacast.com";
+    var apiKey = "76581_0ee0c375605f5763bf54";
 
-  return {
-    on: function(eventName, callback){
-      socket.on(eventName, callback);
-    },
-    emit: function(eventName, data) {
-      socket.emit(eventName, data);
-    }
-  };
-  }]).
-  factory('pagesFactory', ['$http', '$location',
+    return {
+      getAllVods: function() {
+        return $http.get(baseURL + '/v2/vod?apikey='+ apiKey +'&_format=json');
+      }
+    };
+  }
+])
+
+.factory('pagesFactory', ['$http', '$location',
   function($http, $location) {
 
     return {
       getPages: function() {
         return $http.get('/api/pages');
       },
-
       savePage: function(pageData) {
         var id = pageData._id;
 

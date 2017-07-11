@@ -61,7 +61,7 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
-var socket = io.connect('https://houseologychat.herokuapp.com', {path: '/socket.io/'});
+var socket = io.connect('https://houseologychat.herokuapp.com', {path: '/socket.io/', transports: ['websocket']});
 var username;
 var usertype;
 var message;
@@ -89,13 +89,16 @@ var emojis = ['angel.svg',
             'bale-face.gif'];
 
 socket.on('welcome', function(data) {
+
     username = $("#messageSend").data('user');
     usertype= $("#messageSend").data('usertype');
-    message = username + ' has just joined the chat!';
+    message = "<span class='systemMessage'>" + username + ' has just joined the chat!</span>';
     if(username !== undefined) {
         socket.emit('newUser', {username: username});
         socket.emit('chat message', {message: message});
     }
+
+    $("#message-frame .pleaseWait").parent().remove();
 });
 
 socket.on('userTyping', function(user) {
@@ -118,7 +121,7 @@ socket.on('userList update', function(_user) {
 });
 
 socket.on('chat message', function(data) {
-    addMessage(data)
+    addMessage(data);
 });
 
 function addMessage(messageData) {
@@ -129,11 +132,12 @@ function addMessage(messageData) {
             $(this).addClass("myMessage");
         }
 
+        if($(this).find("span").hasClass("systemMessage")) {
+            $(this).addClass("systemMessageContainer")
+        }
+
         if($(this).find("span").data("usertype") == "admin") {
             var strCont = $(this).html();
-            if(strCont.indexOf("*Admin*") == -1) {
-                $(this).find("span").prepend("*Admin* ")
-            }
             $(this).addClass("adminMessage");
         }
     });
@@ -141,11 +145,11 @@ function addMessage(messageData) {
 
 $(document).ready(function() {
 
-    $("#messageSend").keydown(function(event) {
-       socket.emit("userTyping", username);
-    });
+    addMessage("<span class='pleaseWait systemMessage'>Please wait... you're being connected to the live chat</span>");
 
     $("#messageSend").keydown(function(event) {
+        socket.emit("userTyping", username);
+
         if(event.keyCode == 13) {
             $("#sendIt").trigger("click");
         }

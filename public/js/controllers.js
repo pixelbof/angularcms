@@ -49,8 +49,18 @@ controller('AppCtrl', ['$scope', '$rootScope', 'UserService','flashMessageServic
             console.log('error fetching data');
     });
 }]).
-controller('liveStream', ['$scope','$cookies', 'AuthService','flashMessageService','$location', 'socket', '$route',
-    function($scope,$cookies,AuthService,flashMessageService,$location, socket, $route) {
+controller('v-pods', ['$scope','vodFactory', '$routeParams', '$sce', 
+    function($scope, vodFactory, $routeParams,$sce) {
+     vodFactory.getAllVods().then(
+        function(response) {
+            $scope.vodContent = response.data;
+        }, function() {
+          console.log("unable to fetch data for vods");
+        }
+     );
+}]).
+controller('liveStream', ['$scope','$cookies', 'AuthService','flashMessageService','$location', '$route',
+    function($scope,$cookies,AuthService,flashMessageService,$location,$route) {
       var now = new Date();
 
       $scope.loggedInUser = $cookies.get('loggedInUser');

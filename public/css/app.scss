@@ -112,6 +112,13 @@ a {
             text-align: right;
             font-size: 12px;
         }
+
+        &.systemMessageContainer {
+            background-color: #999999;
+            color: #000;
+            min-width: 100%;
+            max-width: 100%;
+        }
     }
 }
 

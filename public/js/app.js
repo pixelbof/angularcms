@@ -14,6 +14,10 @@ angular.module('myApp', [
 config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
         //USER ROUTES
+        $routeProvider.when('/v-pods', {
+            templateUrl: 'partials/v-pods.html',
+            controller: 'v-pods'
+        });
         $routeProvider.when('/live', {
             templateUrl: 'partials/live-stream.html',
             controller: 'liveStream'
