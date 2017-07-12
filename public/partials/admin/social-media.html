@@ -1,0 +1,22 @@
+<a href="admin/add-edit-social/0" class="btn btn-success pull-right"> Add New Social Media item</a>
+<h1>Social Media List</h1>
+<hr/>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>URL</th>
+      <th>Edit</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+
+  <tr ng-repeat="social in socialMedia">
+    <td>{{social.title}}</td>
+    <td>{{social.url}}</td>
+    <td> <a ng-href="admin/add-edit-social/{{social._id}}">Edit</a>
+    </td>
+    <td> <a ng-href="#" ng-click="deleteSocialMedia(social._id)">Delete</a>
+    </td>
+  </tr>
+</table>

@@ -4,6 +4,7 @@ body {
   color: #fff;
   font-size: 14px;
   font-family: 'Old Standard TT', serif;
+  text-shadow: 2px 2px 6px #000;
 }
 
 @media screen and (max-width: 320px) {
@@ -161,4 +162,14 @@ a:visited {
   background-repeat: no-repeat;
   background-size: cover;
   padding: 0;
+}
+
+.socialBar {
+  margin-top: -5px;
+}
+
+.socialBar li {
+  list-style-type: none;
+  display: inline-block;
+  margin-left: 10px;
 }
