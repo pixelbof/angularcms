@@ -83,6 +83,16 @@ a {
     }
 }
 
+.messageSection {
+    .nav-tabs {
+        li {
+            a {
+                text-shadow: none;
+            }
+        }
+    }
+}
+
 #message-frame {
     padding-left: 0;
 
@@ -116,7 +126,7 @@ a {
 
         &.systemMessageContainer {
             background-color: #999999;
-            color: #000;
+            color: #fff;
             min-width: 100%;
             max-width: 100%;
         }
