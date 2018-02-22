@@ -21,9 +21,9 @@
             <li class="active">
                 <a href="#" data-tab="#messages" aria-controls="messages">Messages</a>
             </li>
-            <!--<li>
+            <li>
                 <a href="#" data-tab="#users" aria-controls="users" ng-if="userType == 'admin'">Connected Users <span class="userCount"></span></a>
-            </li>-->
+            </li>
         </ul>
 
         <div class="tab-content">
@@ -48,11 +48,11 @@
                 </div>
             </div>
 
-            <!--<div role="tabpanel" class="tab-pane"  id="users">
+            <div role="tabpanel" class="tab-pane"  id="users">
                 <div class="well userList">
                     <ul id="userList"></ul>
                 </div>
-            </div>-->
+            </div>
         </div>
     </div>
 </div>
@@ -61,8 +61,8 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
-var socket = io.connect('https://houseologychat.herokuapp.com', {path: '/socket.io/', transports: ['websocket']});
-var username;
+var username = Cookies.get('loggedInUser');
+var socket = io.connect('http://localhost:3001', {'query': '&user='+username, path: '/socket.io/', transports: ['websocket', 'polling']});
 var usertype;
 var message;
 var html;
@@ -89,8 +89,6 @@ var emojis = ['angel.svg',
             'bale-face.gif'];
 
 socket.on('welcome', function(data) {
-
-    username = $("#messageSend").data('user');
     usertype= $("#messageSend").data('usertype');
     message = "<span class='systemMessage'>" + username + ' has just joined the chat!</span>';
     if(username !== undefined) {
