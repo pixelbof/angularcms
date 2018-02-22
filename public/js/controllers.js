@@ -11,12 +11,12 @@ controller('AppCtrl', ['$scope', '$rootScope', 'UserService','flashMessageServic
         $scope.userType = $cookies.get('userType');
         $scope.user = $cookies.get('loggedInUser');
 
-        var disableCheck = $interval(function() {
+        /*var disableCheck = $interval(function() {
           UserService.checkAccountStatus($scope.user).then(
           function(response) {
             $rootScope.accountStatus = response.data.accountStatus;
           });
-        }, 1000);
+        }, 1000);*/
         
         $scope.$watch(function () {
             return $rootScope.accountStatus;
