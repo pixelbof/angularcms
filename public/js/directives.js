@@ -2,9 +2,25 @@
 
 /* Directives */
 
+angular.module('myApp.directives', [])
+.directive('socialMedia', [
+  function() {
+    return {
+      controller: function($scope, socialFactory, $location) {
+          $scope.$on('$routeChangeSuccess', function() {
+            $scope.socialMedia = "";
 
-angular.module('myApp.directives', []).
-  directive('navBar', [
+            socialFactory.getSocialMedia().then(
+              function(response) {
+                $scope.socialMedia = response.data;
+              });
+          });
+        },
+        templateUrl: 'partials/directives/socialMedia.html'
+      };
+  }
+])
+.directive('navBar', [
   function() {
     return {
       controller: function($scope, pagesFactory, $location) {
@@ -32,6 +48,10 @@ angular.module('myApp.directives', []).
                 {
                   title: 'Pages',
                   url: 'admin/pages'
+                },
+                {
+                  title: 'Social Media',
+                  url: 'admin/socialMedia'
                 }]
               }
             }
@@ -40,8 +60,8 @@ angular.module('myApp.directives', []).
         templateUrl: 'partials/directives/nav.html'
       };
   }
-]).
-directive('adminLogin', [
+])
+.directive('adminLogin', [
   function() {
     return {
       controller: function($scope, $cookies, $location) {
@@ -57,8 +77,8 @@ directive('adminLogin', [
       templateUrl: 'partials/directives/admin-login.html'
     };
   }
-]).
-directive('dateNow', ['$filter', function($filter) {
+])
+.directive('dateNow', ['$filter', function($filter) {
   return {
     link: function( $scope, $element, $attrs) {
       $element.text($filter('date')(new Date(), $attrs.dateNow));

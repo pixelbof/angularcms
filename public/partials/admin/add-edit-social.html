@@ -1,0 +1,28 @@
+<h1>{{heading}}</h1>
+<hr/>
+
+<form role="form" id="add-social" ng-submit="saveSocialMedia()">
+<div class="form-group">
+<label>Social Media Item ID</label>
+<input class="form-control" type="text" readonly ng-model="socialMediaContent._id"/>
+</div>
+
+<div class="form-group">
+<label>Social Media Title</label>
+<input class="form-control" type="text" ng-model="socialMediaContent.title"/>
+</div>
+
+<div class="form-group">
+<label>Social Media URL</label>
+<input class="form-control" type="text" ng-model="socialMediaContent.url"/>
+</div>
+
+<div class="form-group">
+<label>Social Media Icon</label><br />
+<select class="form-control" ng-model="socialMediaContent.icon" ng-options="x for x in socialItem">
+</select>
+</div>
+
+<input type="submit" class="btn btn-success" value="Save">
+</div>
+</form>

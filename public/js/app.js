@@ -68,6 +68,14 @@ config(['$routeProvider', '$locationProvider',
             templateUrl: 'partials/admin/add-edit-page.html',
             controller: 'AddEditPageCtrl'
         });
+        $routeProvider.when('/admin/socialMedia', {
+            templateUrl: 'partials/admin/social-media.html',
+            controller: 'AdminSocialMediaCtrl'
+        });
+        $routeProvider.when('/admin/add-edit-social/:id', {
+            templateUrl: 'partials/admin/add-edit-social.html',
+            controller: 'AddEditSocialMediaCtrl'
+        });
         $routeProvider.when('/admin/logout', {
             templateUrl: 'partials/admin/login.html',
             controller: 'CentralLogoutCtrl' //central logout for all users
