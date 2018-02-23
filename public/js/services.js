@@ -13,6 +13,32 @@ angular.module('myApp.services', [])
   }
 ])
 
+.factory('socialFactory', ['$http', '$location',
+  function($http, $location) {
+
+    return {
+      getSocialMedia: function() {
+        return $http.get('/api/socialMedia');
+      },
+      getSocialMediaContent: function(id) {
+        return $http.get('/api/socialMedia/' + id);
+      },
+      saveSocialMedia: function(socialData) {
+        var id = socialData._id;
+
+        if (id == 0) {
+          return $http.post('/api/socialMedia/add', socialData);
+        } else {
+          return $http.post('/api/socialMedia/update', socialData);
+        }
+      },
+      deleteSocialMedia: function(id) {
+        return $http.get('/api/socialMedia/delete/' + id);
+      }
+    };
+  }
+])
+
 .factory('pagesFactory', ['$http', '$location',
   function($http, $location) {
 

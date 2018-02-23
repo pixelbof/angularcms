@@ -201,8 +201,8 @@ controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'fla
         )
       };
   }
-]).
-controller('AdminPagesCtrl', ['$scope', '$route', '$log', 'pagesFactory', '$location', 'flashMessageService',
+])
+.controller('AdminPagesCtrl', ['$scope', '$route', '$log', 'pagesFactory', '$location', 'flashMessageService',
   function($scope, $route, $log, pagesFactory, $location, flashMessageService) {
     
     pagesFactory.getPages().then(
@@ -221,9 +221,9 @@ controller('AdminPagesCtrl', ['$scope', '$route', '$log', 'pagesFactory', '$loca
       };
 
     }
-]).
-controller('AddEditPageCtrl', ['$scope', '$log', 'pagesFactory', '$routeParams', '$location', 'flashMessageService', '$filter', 
-function($scope, $log, pagesFactory, $routeParams, $location, flashMessageService, $filter) {
+])
+.controller('AddEditPageCtrl', ['$scope', '$log', 'pagesFactory', '$routeParams', '$location', 'flashMessageService', '$filter', 
+  function($scope, $log, pagesFactory, $routeParams, $location, flashMessageService, $filter) {
         $scope.pageContent = {};
         $scope.pageContent._id = $routeParams.id;
         $scope.heading = "Add a New Page";
@@ -267,6 +267,60 @@ function($scope, $log, pagesFactory, $routeParams, $location, flashMessageServic
             function() {
               flashMessageService.setMessage("Page Saved Successfully");
               $location.path('/admin/pages');
+            },
+            function() {
+              $log.error('error saving data');
+            }
+          );
+        };
+    }
+])
+.controller('AdminSocialMediaCtrl', ['$scope', '$route', '$log', 'socialFactory', '$location', 'flashMessageService',
+  function($scope, $route, $log, socialFactory, $location, flashMessageService) {
+    
+    socialFactory.getSocialMedia().then(
+      function(response) {
+        $scope.socialMediaContent = response.data;
+      },
+      function(err) {
+        $log.error(err);
+      });
+
+      $scope.deleteSocialMedia = function(id) {
+        socialFactory.deleteSocialMedia(id).then(function() {
+            flashMessageService.setMessage("Social media item deleted Successfully");
+            $route.reload();
+        });
+      };
+
+    }
+])
+.controller('AddEditSocialMediaCtrl', ['$scope', '$log', 'socialFactory', '$routeParams', '$location', 'flashMessageService', 
+  function($scope, $log, socialFactory, $routeParams, $location, flashMessageService) {
+        $scope.socialMediaContent = {};
+        $scope.socialMediaContent._id = $routeParams.id;
+        $scope.heading = "Add a new social media item";
+        $scope.socialItem = ["Facebook", "Twitter", "TuneIn", "YouTube", "Instagram", "Reddit", "Pinterest", "Tumblr", "Google+", "LinkedIn", "iTunes"];
+
+        console.log($scope.socialMediaContent)
+
+        if ($scope.socialMediaContent._id !== 0) {
+          $scope.heading = "Update existing social media item";
+          socialFactory.getSocialMediaContent($scope.socialMediaContent._id).then(
+              function(response) {
+                $scope.socialMediaContent = response.data;
+                $log.info($scope.socialMediaContent);
+              },
+              function(err) {
+                $log.error(err);
+              });
+        }
+
+        $scope.saveSocialMedia = function() {
+          socialFactory.saveSocialMedia($scope.socialMediaContent).then(
+            function() {
+              flashMessageService.setMessage("Social media item saved Successfully");
+              $location.path('/admin/socialMedia');
             },
             function() {
               $log.error('error saving data');

@@ -5,6 +5,7 @@ var bcrypt = require('bcrypt-nodejs');
 var Page= require('../models/page.js');
 var adminUser= require('../models/admin-users.js');
 var userProfile= require('../models/user-profile.js');
+var socialMedia= require('../models/social-media.js');
 
 /*Validate current session */
 function sessionCheck(request,response,next){
@@ -30,6 +31,16 @@ router.get('/pages', function(request, response) {
     });
 });
 
+router.get('/socialMedia', function(request, response) {
+    return socialMedia.find(function(err, social) {
+        if (!err) {
+            return response.send(social);
+        } else {
+            return response.send(500, err);
+        }
+    });
+});
+
 /* GET: Page contents for users */
 router.get('/pages/details/:url', function(request, response) {
     var url = request.params.url;
@@ -43,6 +54,64 @@ router.get('/pages/details/:url', function(request, response) {
 });
 
 /*ADMIN ROUTES */
+
+/* GET: Get single social media item */
+router.get('/socialMedia/:id', sessionCheck, function(request, response) {
+    var id = request.params.id;
+    socialMedia.findOne({
+        _id: id
+    }, function(err, page) {
+        if (err)
+            return console.log(err);
+        return response.send(socialMedia);
+    });
+});
+
+/* POST: Add new social media item */
+router.post('/socialMedia/add', sessionCheck, function(request, response) {
+    console.log(request.body)
+    var _socialMedia = new socialMedia({
+        title: request.body.title,
+        url: request.body.url,
+        icon: request.body.icon
+    });
+
+    _socialMedia.save(function(err) {
+        if (!err) {
+            return response.send(200, _socialMedia);
+        } else {
+            return response.send(500, err);
+        }
+    });
+});
+
+/* POST: Update single social media item */
+router.post('/socialMedia/update', sessionCheck, function(request, response) {
+    var id = request.body._id;
+
+    socialMedia.update({
+        _id: id
+    }, {
+        $set: {
+            title: request.body.title,
+            url: request.body.url,
+            icon: request.body.icon
+        }
+    }).exec();
+    response.send(request.body.title + " link updated");
+});
+
+/* GET: Delete single social media item */
+router.get('/socialMedia/delete/:id', sessionCheck, function(request, response) {
+    var id = request.params.id;
+    socialMedia.remove({
+        _id: id
+    }, function(err) {
+        return console.log(err);
+    });
+    return response.send('Social media id- ' + id + ' has been deleted');
+});
+
 
 /* POST: Add new pages */
 router.post('/pages/add', sessionCheck, function(request, response) {
