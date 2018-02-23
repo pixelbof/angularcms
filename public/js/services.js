@@ -89,6 +89,9 @@ angular.module('myApp.services', [])
       getProfile: function(user) {
         return $http.get('/api/get-profile/'+ user)
       },
+      getProfilePic:function(user) {
+        return $http.get('/api/get-profile-pic/'+ user);
+      },
       updateProfile: function(profileData) {
         if(profileData.lastUpdated == null) {
           return $http.post('/api/add-profile', profileData);
