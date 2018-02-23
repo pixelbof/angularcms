@@ -174,6 +174,18 @@ router.get('/get-profile/:user', function(request, response) {
     });
 });
 
+router.get('/get-profile-pic/:user', function(request, response) {
+    return userProfile.findOne({
+        username: request.params.user
+    }, function(err, data) {
+        try {
+            return response.send(data.profileImage)
+        } catch(err) {
+            return response.send('false')
+        }
+    });
+});
+
 router.post('/update-user-profile', function(request, response) {
     userProfile.update({
         username: request.body.username

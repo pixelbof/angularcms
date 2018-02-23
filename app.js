@@ -30,8 +30,8 @@ app.set('view engine', 'jade');
 app.use(cookieParser('houseology'));
 app.use (session());
 app.get('env') === 'development' ? app.use(logger('dev')) : app.use(logger('short'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
