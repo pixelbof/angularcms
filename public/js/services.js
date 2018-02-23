@@ -13,6 +13,41 @@ angular.module('myApp.services', [])
   }
 ])
 
+.factory('shopFactory', ['$http', '$location',
+  function($http, $location) {
+    return {
+      getItems: function() {
+        return $http.get('/api/shop/getItems');
+      },
+      getItemDetails: function(item) {
+        return $http.get('/api/shop/getItems/'+item);
+      },
+      getBasket: function(user) {
+        return $http.get('/api/shop/getItems/'+user);
+      },
+      getPaymentHistory: function(user) {
+        return $http.get('/api/shop/getItems/'+user);
+      },
+      getPaymentHistoryDetails: function(paymentId) {
+        return $http.get('/api/shop/getItems/'+paymentId);
+      },
+      addPaymentHistory: function(paymentDetails) {
+        return $http.post('/api/shop/addPaymentHistory', paymentDetails);
+        var id = paymentDetails._id;
+
+        if (id == 0) {
+          return $http.post('/api/shop/PaymentHistory/add', paymentDetails);
+        } else {
+          return $http.post('/api/shop/PaymentHistory/update', paymentDetails);
+        }
+      },
+      makePayment: function(pspDetails) {
+        return $http.post('psp api details', pspDetails);
+      }
+    }
+  }
+])
+
 .factory('socialFactory', ['$http', '$location',
   function($http, $location) {
 

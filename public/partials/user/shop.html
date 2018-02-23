@@ -1,0 +1,14 @@
+<h1>Shop</h1>
+<hr />
+<div class="col-md-8" ng-if="productLength > 0" ng-repeat="item in products">
+    <div class="row">
+        <p class="col-md-8">{{item.prductName}}</p>
+        <p class="col-md-8">{{item.productDescription}}</p>
+    </div>
+</div>
+
+<div class="col-md-8" ng-if="productLength <= 0">
+    <div class="row">
+        <p class="col-md-8">No products are available at the moment, but please try again soon.</p>
+    </div>
+</div>

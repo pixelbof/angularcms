@@ -6,6 +6,7 @@ var Page= require('../models/page.js');
 var adminUser= require('../models/admin-users.js');
 var userProfile= require('../models/user-profile.js');
 var socialMedia= require('../models/social-media.js');
+var Shop= require('../models/shop-product.js');
 
 /*Validate current session */
 function sessionCheck(request,response,next){
@@ -21,6 +22,7 @@ router.get('/', function(req, res) {
   res.send('Welcome to the API zone');
 });
 
+/* GET: Page html and information */
 router.get('/pages', function(request, response) {
     return Page.find(function(err, pages) {
         if (!err) {
@@ -31,6 +33,7 @@ router.get('/pages', function(request, response) {
     });
 });
 
+/* GET: Page social media icons and links */
 router.get('/socialMedia', function(request, response) {
     return socialMedia.find(function(err, social) {
         if (!err) {
@@ -50,6 +53,16 @@ router.get('/pages/details/:url', function(request, response) {
         if (err)
             return console.log(err);
         return response.send(page);
+    });
+});
+
+router.get('/shop/getItems', function(request, response) {
+    return Shop.find(function(err, items) {
+        if (!err) {
+            return response.send(items);
+        } else {
+            return response.send(500, err);
+        }
     });
 });
 

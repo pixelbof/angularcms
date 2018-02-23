@@ -11,12 +11,12 @@ controller('AppCtrl', ['$scope', '$rootScope', 'UserService','flashMessageServic
         $scope.userType = $cookies.get('userType');
         $scope.user = $cookies.get('loggedInUser');
 
-        /*var disableCheck = $interval(function() {
+        $scope.$on('user-status-change', function(event, args) {
           UserService.checkAccountStatus($scope.user).then(
-          function(response) {
-            $rootScope.accountStatus = response.data.accountStatus;
-          });
-        }, 1000);*/
+            function(response) {
+              $rootScope.accountStatus = response.data.accountStatus;
+            });
+        });
         
         $scope.$watch(function () {
             return $rootScope.accountStatus;
@@ -61,6 +61,17 @@ controller('v-pods', ['$scope','$cookies', 'vodFactory', '$routeParams', '$sce',
         }
      );
 }]).
+controller('shopCtrl', ['$scope','flashMessageService','$location', '$route', 'shopFactory',
+    function($scope,flashMessageService,$location,$route, shopFactory) {
+      shopFactory.getItems().then(function(res) {
+        $scope.products = res.data;
+        $scope.productLength = res.data.length;
+        console.log(res.data)
+      }, function(err) {
+        flashMessageService("unable to retrieve products");
+      });
+    }
+]).
 controller('liveStream', ['$scope','$cookies', 'AuthService','flashMessageService','$location', '$route',
     function($scope,$cookies,AuthService,flashMessageService,$location,$route) {
       var now = new Date();
@@ -159,8 +170,8 @@ function($scope, $timeout, $log, UserService, $routeParams, $location, flashMess
 
     }
 ]).
-controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'flashMessageService',
-  function($scope, $route, $log, UserService, flashMessageService) {
+controller('AdminUserListCtrl', ['$scope','$rootScope', '$route', '$log', 'UserService', 'flashMessageService',
+  function($scope, $rootScope, $route, $log, UserService, flashMessageService) {
     UserService.getUsers().then(
       function(response) {
         $scope.allUsers = response.data;
@@ -183,6 +194,7 @@ controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'fla
         UserService.disableUser(id).then(
           function() {
             flashMessageService.setMessage("User "+ id +" disabled Successfully");
+            $rootScope.$broadcast('user-status-change');
             $route.reload();
           }, function(err) {
             $log.error(err);
@@ -194,6 +206,7 @@ controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'fla
         UserService.enableUser(id).then(
           function() {
             flashMessageService.setMessage("User "+ id +" enabled Successfully");
+            $rootScope.$broadcast('user-status-change');
             $route.reload();
           }, function(err) {
             $log.error(err);

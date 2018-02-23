@@ -18,6 +18,10 @@ config(['$routeProvider', '$locationProvider',
             templateUrl: 'partials/v-pods.html',
             controller: 'v-pods'
         });
+        $routeProvider.when('/shop', {
+            templateUrl: 'partials/user/shop.html',
+            controller: 'shopCtrl'
+        });
         $routeProvider.when('/live', {
             templateUrl: 'partials/live-stream.html',
             controller: 'liveStream'
