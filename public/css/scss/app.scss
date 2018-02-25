@@ -1,15 +1,27 @@
+@import 'reset';
 @import url('https://fonts.googleapis.com/css?family=Old+Standard+TT');
-//variables
-$break-small: 320px;
-$break-large: 1200px;
+@import 'variables';
 
 //Global setting styles
+.no-padding {
+    padding-left: 0;
+    padding-right: 0;
+}
+.margin-right {
+    padding-right: 15px;
+}
+label {
+    margin-bottom: 10px;
+}
+html {
+    height: 100%
+}
 body {
+    height: 100%;
     background-color: #000;
     color: #fff;
     font-size: 14px;
     font-family: 'Old Standard TT', serif;
-    text-shadow: 2px 2px 6px #000;
 
     @media screen and (max-width: $break-small) {
         background-image: none;
@@ -21,6 +33,31 @@ body {
         background-size: cover;
         background-position: top center;
     }
+}
+
+#navbar {
+    float: none;
+     span {
+         & > div {
+             padding-left: 0;
+             padding-right: 0;
+         }
+     }
+}
+
+.brandHeader {
+    width: 100%;
+    text-align: center;
+    
+    .brandLogo {
+        img {
+            width: 20%;
+        }
+    }
+}
+
+.mainContent {
+    min-height: calc(100vh - 170px);
 }
 
 a {
@@ -40,7 +77,6 @@ a {
             &.mainNav {
                 li {
                     a {
-                        font-weight: bold;
                         font-size: 1.2em;
                     }
                 }
@@ -48,7 +84,7 @@ a {
             &>li {
                 &>a {
                     color: #fff;
-                    padding: 10px 0 0 20px;
+                    padding: 10px 0 15px 20px;
                     &:hover {
                         text-decoration: underline;
                     }
@@ -59,6 +95,22 @@ a {
 
     background:rgba(0,0,0,0.6);
     border: 0;
+}
+
+input[type=text], input[type=password], input[type=number], .form-control[readonly]   {
+    &:focus {
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(0, 0, 0, 0.6);
+        outline: 0 none;
+        border-color: white;
+    }
+    color: #fff;
+    border-radius: 0;
+    border:1px solid white;
+    background: rgb(54, 54, 54);
+}
+
+.form-control[readonly] {
+    color: #666;
 }
 
 //Site specific styles
@@ -186,6 +238,10 @@ a {
     background-repeat: no-repeat;
     background-size: cover;
     padding: 0;
+}
+
+.footer {
+    margin-top: -60px;
 }
 
 .socialBar {
