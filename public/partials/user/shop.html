@@ -1,14 +1,49 @@
-<h1>Shop</h1>
-<hr />
-<div class="col-md-8" ng-if="productLength > 0" ng-repeat="item in products">
-    <div class="row">
-        <p class="col-md-8">{{item.prductName}}</p>
-        <p class="col-md-8">{{item.productDescription}}</p>
+<h1 class="col-md-6">Shop</h1>
+<div class="col-md-6 basket">
+    <p class="pull-right">Basket: {{basketProducts.length}} | £{{totalPrice}} <span class="showBasket">></span></p>
+
+    <div class="basketHolder">
+        <div ng-if="basketProducts" ng-repeat="products in basketProducts">
+            <div class="itemHolder">
+                <h1>{{products.name}}</h1>
+                <p>{{products.size}}</p>
+                <p>£{{products.price}}</p>
+            </div>
+            <hr />
+        </div>
+        <div ng-if="basketProducts < 1">No products Added</div>
+        <p>Total Amount: £{{totalPrice}}</p>
+        <input type="button" value="checkout" ng-click="checkout()" />
     </div>
 </div>
 
-<div class="col-md-8" ng-if="productLength <= 0">
+<hr class="col-md-12" />
+<form>
+<div class="productItem col-md-3" ng-if="productLength > 0" ng-repeat="item in products">
+    <div class="row">
+        <h1 class="col-md-12">{{item.productName}}</h1>
+        <img src="{{item.productImage}}" />
+        <p class="col-md-12" ng-bind-html="item.productDescription | to_trusted"></p>
+        <p class="size pull-left">Size: {{item.productSize}}</p>
+        <p class="price pull-right">£{{item.productPrice}}</p>
+
+        <input type = "submit" value = "Add" ng-click = "addToBasket(item.productName, item.productPrice, item.productSize)">
+    </div>
+</div>
+</form>
+
+<div class="col-md-4" ng-if="productLength <= 0">
     <div class="row">
         <p class="col-md-8">No products are available at the moment, but please try again soon.</p>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $(".basketHolder").hide();
+
+        $(".showBasket").click(function() {
+            $(".basketHolder").slideToggle();
+        })
+    })
+</script>

@@ -1,0 +1,43 @@
+<h1>{{heading}}</h1>
+<hr/>
+
+<form role="form" id="add-page" ng-submit="saveShopItem()">
+<div class="form-group">
+<label>Product Reference</label>
+<input class="form-control" type="text" readonly ng-model="shopItemContent._id"/>
+</div>
+
+<div class="form-group">
+<label>Product Name</label>
+<input class="form-control" type="text" ng-change="updateURL()" ng-model="shopItemContent.productName"/>
+</div>
+
+<div class="form-group">
+<label>Product Image</label>
+<input id="productImage" type="file" class="file">
+<p class="small">Please ensure that images are <strong>700kb</strong> or under</p>
+</div>
+
+<div class="form-group">
+<label>Product Description
+<textarea ui-tinymce="tinymceOptions" rows="15" class="form-control" type="text" ng-model="shopItemContent.productDescription"></textarea>
+</div>
+
+<h1>Product Options</h1>
+<hr />
+
+<div class="form-group col-md-6">
+    <label>Product Size</label>
+    <select class="form-control" ng-model="shopItemContent.productSize" ng-options="x for x in productSizesSelect">
+    </select>
+</div>
+
+<div class="form-group col-md-6">
+    <label>Price</label>
+    <input class="form-control" type="number"  ng-model="shopItemContent.productPrice"/>
+</div>
+    
+
+<input type="submit" class="btn btn-success" value="Add Product">
+</div>
+</form>

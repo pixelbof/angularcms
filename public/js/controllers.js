@@ -61,18 +61,119 @@ controller('v-pods', ['$scope','$cookies', 'vodFactory', '$routeParams', '$sce',
         }
      );
 }]).
-controller('shopCtrl', ['$scope','flashMessageService','$location', '$route', 'shopFactory',
-    function($scope,flashMessageService,$location,$route, shopFactory) {
+controller('shopCtrl', ['$scope', 'localStorage', '$rootScope', 'flashMessageService','$location', '$route', 'shopFactory', '$sce',
+    function($scope,localStorage,$rootScope,flashMessageService,$location,$route, shopFactory, $sce) {
       shopFactory.getItems().then(function(res) {
+        $scope.basketProducts = [];
+        $scope.currentPrice = 0;
+        $scope.basketLength = 0;
+        $scope.totalPrice = 0; 
+        $scope.products = '';
         $scope.products = res.data;
+
+        $scope.products.description = $sce.trustAsHtml(res.data.productDescription);
         $scope.productLength = res.data.length;
-        console.log(res.data)
       }, function(err) {
         flashMessageService("unable to retrieve products");
       });
+
+      $scope.addToBasket = function(productName, productPrice, productSize) {
+        $scope.basketProducts.push({name:productName, price:productPrice, size:productSize});
+        $scope.currentPrice = $scope.totalPrice + productPrice;
+        $scope.totalPrice = $scope.currentPrice;
+      }
+
+      $scope.checkout = function() {
+        console.log("checkout pressed")
+        $rootScope.products = $scope.basketProducts;
+        $rootScope.totalAmount = $scope.totalPrice;
+        $location.path("/shop/checkout");
+      }
     }
-]).
-controller('liveStream', ['$scope','$cookies', 'AuthService','flashMessageService','$location', '$route',
+])
+.controller('shopCheckoutCtrl', ['$scope', '$rootScope', '$location', '$route', '$log', 'shopFactory', 'flashMessageService',
+  function($scope, $rootScope, $location, $route, $log, shopFactory, flashMessageService) {
+
+    $scope.products = {};
+    $scope.products = $rootScope.products;
+
+    $scope.totalAmount = $rootScope.totalAmount;
+
+    $scope.PaymentSuccess = function() {
+      for(var i = 0; i < $scope.products.length; i++) {
+        $scope.username = $scope.loggedInUser ? $scope.loggedInUser : "guest"
+        console.log("raw products items", $scope.products[i])
+
+        $scope.productHistory = {};
+        $scope.productHistory.userName = $scope.username;
+        $scope.productHistory.userAddress = $scope.products[i].userAddress;
+        $scope.productHistory.productName = $scope.products[i].name;
+        $scope.productHistory.productSize = $scope.products[i].size;
+        $scope.productHistory.productPrice = $scope.products[i].price;
+
+        console.log("product history items", $scope.productHistory)
+        
+        shopFactory.setPaymentHistory($scope.productHistory).then(function(res) {
+            $location.path("/shop/payment/success");
+        },
+        function(err) {
+          $log.error('error saving data: ' + JSON.stringify(err));
+        });
+      }
+    }
+
+    $scope.PaymentError = function() {
+      console.log("payment error hit")
+      
+      
+    }
+
+    $scope.PaymentCancelled = function() {
+      console.log("payment cancelled hit")
+      
+      
+    }
+
+    /*shopFactory.getItems().then(
+      function(response) {
+        $scope.shopItemContent = response.data;
+      },
+      function(err) {
+        $log.error(err);
+      });
+    }*/
+  }
+
+])
+.controller('shopPaymentSuccessCtrl', ['$scope', '$rootScope', '$location', '$route', '$log', 'shopFactory', 'flashMessageService',
+  function($scope, $rootScope, $location, $route, $log, shopFactory, flashMessageService) {
+    $scope.products = $rootScope.products;
+
+    console.log("success payment" + $rootScope.products)
+  }]).
+controller('AdminTransactionsCtrl', ['$scope', 'localStorage', '$rootScope', 'flashMessageService','$location', '$route', 'shopFactory', '$sce',
+    function($scope,localStorage,$rootScope,flashMessageService,$location,$route, shopFactory, $sce) {
+      $scope.orders = {};
+      $scope.statusUpdate = ["processing", "delayed", "posted", "out of stock", "cancelled", "refunded"];
+
+      shopFactory.getCurrentTransactions().then(function(res) {
+        $scope.orders = res.data;
+      }, function(err) {
+        flashMessageService("unable to retrieve products");
+      });
+
+      $scope.updateStatus = function(id, status) {
+          shopFactory.updateTransaction(id, status).then(function(res) {
+            flashMessageService.setMessage(res.data);
+            $route.reload();
+          }, function(err) {
+            flashMessageService.setMessage("unable to update status of this order");
+          });
+        
+      }
+    }
+])
+.controller('liveStream', ['$scope','$cookies', 'AuthService','flashMessageService','$location', '$route',
     function($scope,$cookies,AuthService,flashMessageService,$location,$route) {
       var now = new Date();
 
@@ -315,8 +416,6 @@ controller('AdminUserListCtrl', ['$scope','$rootScope', '$route', '$log', 'UserS
         $scope.heading = "Add a new social media item";
         $scope.socialItem = ["Facebook", "Twitter", "TuneIn", "YouTube", "Instagram", "Reddit", "Pinterest", "Tumblr", "Google+", "LinkedIn", "iTunes"];
 
-        console.log($scope.socialMediaContent)
-
         if ($scope.socialMediaContent._id !== 0) {
           $scope.heading = "Update existing social media item";
           socialFactory.getSocialMediaContent($scope.socialMediaContent._id).then(
@@ -342,6 +441,84 @@ controller('AdminUserListCtrl', ['$scope','$rootScope', '$route', '$log', 'UserS
         };
     }
 ])
+.controller('AdminShopDisplayCtrl', ['$scope', '$route', '$log', 'shopFactory', '$location', 'flashMessageService',
+  function($scope, $route, $log, shopFactory, $location, flashMessageService) {
+    
+    shopFactory.getItems().then(
+      function(response) {
+        $scope.shopItemContent = response.data;
+      },
+      function(err) {
+        $log.error(err);
+      });
+
+      $scope.deleteSocialMedia = function(id) {
+        shopFactory.deleteSocialMedia(id).then(function() {
+            flashMessageService.setMessage("Social media item deleted Successfully");
+            $route.reload();
+        });
+      };
+
+    }
+])
+.controller('AdminAddEditShopCtrl', ['$scope', '$location', '$log', 'shopFactory', '$routeParams', '$location', 'flashMessageService', 
+  function($scope, $location, $log, shopFactory, $routeParams, flashMessageService) {
+        $scope.shopItemContent = {};
+        $scope.shopItemContent._id = $routeParams.id;
+        $scope.heading = "Add a new shop item";
+        $scope.productSizesSelect = ["small", "medium", "large"];
+
+        console.log($scope.shopItemContent)
+
+        function getBase64(file) {
+          var reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = function () {
+            $scope.shopItemContent.productImage = reader.result;
+          };
+          reader.onerror = function (error) {
+            console.log('Error: ', error);
+          };
+        }
+
+        if ($scope.shopItemContent._id != 0) {
+          $scope.heading = "Update existing item";
+          shopFactory.getItems($scope.shopItemContent._id).then(
+              function(response) {
+                $scope.shopItemContent = response.data;
+                $log.info($scope.shopItemContent);
+              },
+              function(err) {
+                $log.error(err);
+              });
+        }
+
+        $scope.saveShopItem = function() {
+          var files = document.getElementById('productImage').files;
+          if(files.length > 0) {
+            if(files[0].size <= 700000) {
+              getBase64(files[0])
+            } else {
+              flashMessageService.setMessage("The file you supplied is over 700kb");
+              return false;
+            }
+          }
+
+          $timeout((function() {
+          shopFactory.saveShopItem($scope.shopItemContent).then(
+            function() {
+              flashMessageService.setMessage("Shop item saved Successfully");
+              $location.path('/admin/shop-display');
+            },
+            function() {
+              $log.error('error saving data');
+            }
+          );
+        }, 1000));
+
+        };
+    }
+])
 
 //CENTRAL CONTROLLERS FOR ALL USERS
 .controller('CentralRegisterCtrl', ['$scope','$controller','$rootScope', '$log','$location', 'UserRegisterService', 'UsernameCheckService', 'flashMessageService',
@@ -350,12 +527,17 @@ controller('AdminUserListCtrl', ['$scope','$rootScope', '$route', '$log', 'UserS
         username: '',
         password: '',
         userType: '',
+        email: '',
+        passwordPin: '',
+        chatName: '',
         accountStatus: 'active',
     };
 
     $scope.userTypes = ['user', 'admin'];
 
     $scope.checkUsername = function() {
+      $scope.newUser.username = $scope.newUser.email;
+
       UsernameCheckService.checkUsername($scope.newUser.username).then(
         function(res) {
           if(res.data !== 'false') {

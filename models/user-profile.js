@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var userProfile = new Schema({
-        username: String,
+        chatName: String,
         fullName: String,
         dob: Date,
         profileImage: String,

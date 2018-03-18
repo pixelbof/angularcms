@@ -1,0 +1,34 @@
+<h1>Shop Transactions</h1>
+<hr/>
+
+<div class="col-md-4 product card" ng-if="orders.length < 1">No orders have yet been recieved.</div>
+
+<table class="table" ng-if="orders.length > 0">
+  <thead>
+    <tr>
+      <th>Order Date</th>
+      <th>Last Updated</th>
+      <th>Order Ref</th>
+      <th>User</th>
+      <th>Product Name</th>
+      <th>Size Ordered</th>
+      <th>Product Price</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+
+  <tr ng-repeat="order in orders | orderBy: 'orderDate'">
+    <td>{{order.orderDate | date:'EEE dd MMM yy | h:mma'}}</td>
+    <td>{{order.lastUpdated | date:'EEE dd MMM yy | h:mma'}}</td>
+    <td>{{order._id}}</td>
+    <td>{{order.userName}}</td>
+    <td>{{order.productName}}</td>
+    <td>{{order.productSize}}</td>
+    <td>{{order.productPrice}}</td>
+    <td>{{order.orderStatus}}</td>
+    <td> 
+      <select class="form-control" ng-model="order.orderStatus" ng-options="x for x in statusUpdate"></select>      
+      <a class="btn btn-success" ng-href="#" ng-click="updateStatus(order._id, order.orderStatus)">Update Status</a>
+    </td>
+  </tr>
+</table>

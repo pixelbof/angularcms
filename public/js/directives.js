@@ -50,6 +50,14 @@ angular.module('myApp.directives', [])
                   url: 'admin/pages'
                 },
                 {
+                  title: 'Shop Admin',
+                  url: 'admin/shop-display'
+                },
+                {
+                  title: 'Transaction List',
+                  url: 'admin/shop-transactions'
+                },
+                {
                   title: 'Social Media',
                   url: 'admin/socialMedia'
                 }]

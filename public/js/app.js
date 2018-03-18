@@ -22,6 +22,18 @@ config(['$routeProvider', '$locationProvider',
             templateUrl: 'partials/user/shop.html',
             controller: 'shopCtrl'
         });
+        $routeProvider.when('/shop/checkout', {
+            templateUrl: 'partials/user/checkout.html',
+            controller: 'shopCheckoutCtrl'
+        });
+        $routeProvider.when('/shop/payment/success', {
+            templateUrl: 'partials/user/payment-success.html',
+            controller: 'shopPaymentSuccessCtrl'
+        });
+        $routeProvider.when('/shop/checkout', {
+            templateUrl: 'partials/user/checkout.html',
+            controller: 'shopCheckoutCtrl'
+        });
         $routeProvider.when('/live', {
             templateUrl: 'partials/live-stream.html',
             controller: 'liveStream'
@@ -51,6 +63,18 @@ config(['$routeProvider', '$locationProvider',
         $routeProvider.when('/admin/dashboard', {
             templateUrl: 'partials/admin/dashboard.html',
             controller: 'AdminDashboardCtrl'
+        });
+        $routeProvider.when('/admin/shop-transactions', {
+            templateUrl: 'partials/admin/shop-transactions.html',
+            controller: 'AdminTransactionsCtrl'
+        });
+        $routeProvider.when('/admin/shop-display', {
+            templateUrl: 'partials/admin/shop-display.html',
+            controller: 'AdminShopDisplayCtrl'
+        });
+        $routeProvider.when('/admin/add-edit-shop/:id', {
+            templateUrl: 'partials/admin/add-edit-shop.html',
+            controller: 'AdminAddEditShopCtrl'
         });
         $routeProvider.when('/admin/user-profile/:user', {
             templateUrl: 'partials/admin/user-profile.html',

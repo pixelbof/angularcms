@@ -23,13 +23,28 @@ angular.module('myApp.services', [])
         return $http.get('/api/shop/getItems/'+item);
       },
       getBasket: function(user) {
-        return $http.get('/api/shop/getItems/'+user);
+        return $http.get('/api/shop/getBasket/'+user);
       },
-      getPaymentHistory: function(user) {
-        return $http.get('/api/shop/getItems/'+user);
+      setPaymentHistory: function(paymentData) {
+        return $http.post('/api/shop/payment/success', paymentData);
+      },
+      getCurrentTransactions: function() {
+        return $http.get('/api/shop/transactions');
+      },
+      updateTransaction: function(id, status) {
+        return $http.post('/api/shop/transaction/update', {id: id, status: status});
       },
       getPaymentHistoryDetails: function(paymentId) {
-        return $http.get('/api/shop/getItems/'+paymentId);
+        return $http.get('/api/shop/getPaymentHistory/invoice/'+paymentId);
+      },
+      saveShopItem: function(shopItem) {
+        var id = shopItem._id;
+
+        if (id == 0) {
+          return $http.post('/api/shop/add', shopItem);
+        } else {
+          return $http.post('/api/shop/update', shopItem);
+        }
       },
       addPaymentHistory: function(paymentDetails) {
         return $http.post('/api/shop/addPaymentHistory', paymentDetails);
@@ -165,7 +180,30 @@ angular.module('myApp.services', [])
     }
   };
 }])
+.factory('localStorage', ['$rootScope', function ($rootScope) {
 
+  var storage = {
+
+      model: {
+          productName: '',
+          productPrice: '',
+          productSize: ''
+      },
+
+      SaveState: function () {
+          sessionStorage.localStorage = angular.toJson(storage.model);
+      },
+
+      RestoreState: function () {
+        storage.model = angular.fromJson(sessionStorage.localStorage);
+      }
+  }
+
+  $rootScope.$on("savestate", storage.SaveState);
+  $rootScope.$on("restorestate", storage.RestoreState);
+
+  return storage;
+}])
 .factory('myHttpInterceptor', ['$q', '$location', '$cookies', function($q, $location, $cookies) {
     return {
         response: function(response) {

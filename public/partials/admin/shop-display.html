@@ -1,0 +1,12 @@
+<a href="admin/add-edit-shop/0" class="btn btn-success pull-right"> Add New product</a>
+<h1>Shop Items</h1>
+<hr/>
+
+<div class="col-md-4 product card" ng-if="shopItemContent.length < 1">No Items have been added as yet, but please check back later</div>
+
+<div class="col-md-4 product card" ng-if="shopItemContent.length > 0" ng-repeat="product in shopItemContent">
+  <h1>{{product.productName}}</h1>
+  <img ng-if="product.productImg" src="{{product.productImg}}">
+  <a href="admin/add-edit-shop/{{product._id}}"><span class="glypicons glyphicons-edit"></span></a>
+  <a href="admin/add-edit-shop/{{product._id}}"><span class="glypicons glyphicons-delete"></span></a>
+</div>

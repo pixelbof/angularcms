@@ -3,6 +3,31 @@
 @import 'variables';
 
 //Global setting styles
+h1 {
+    font-size: 1.5em;
+}
+.clearfix {
+    clear: both;
+}
+
+.paymentZone{
+    background-color: #fff;
+    padding: 10px;
+    color: #000;
+}
+
+.basket {
+    position: relative;
+}
+
+.basketHolder {
+    position: absolute;
+    right: 0;
+    top: 20px;
+    background-color: #000;
+    padding: 15px;
+    z-index: 1000;
+}
 .no-padding {
     padding-left: 0;
     padding-right: 0;
@@ -43,6 +68,23 @@ body {
              padding-right: 0;
          }
      }
+}
+
+.productItem {
+    border-right: 1px solid #fff;
+    padding-right: 10px;
+    margin-right: 10px;
+
+    .price {
+        position: relative;
+        left: -20px;
+        font-weight: bold;
+        color: #fff;
+        text-shadow: 0 0 2px #000;
+    }
+    .size {
+        font-weight: bold;
+    }
 }
 
 .brandHeader {

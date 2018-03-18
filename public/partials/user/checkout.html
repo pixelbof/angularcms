@@ -1,0 +1,78 @@
+<h1>Checkout:</h1>
+<hr/>
+
+<div class="col-md-8">some information</div>
+
+<div class="col-md-4 paymentZone" data-ng-controller="shopCheckoutCtrl">
+    <div class="col-md-12" style="margin-bottom: 15px;">
+        <div class="product" ng-repeat="item in products">
+            <h1>{{item.name}}</h1>
+            <p>{{item.size}}</p>
+            <p>Price: £{{item.price}}.00</p>
+
+            <hr />
+        </div>
+        <hr />
+
+        <span class="totalAmount pull-right">Total Amount: £<span class="amount">{{totalAmount}}.00</span></span>
+
+    </div>
+
+    <div id="paypal-button" class="pull-right"></div>
+</div>
+
+  <script>
+    paypal.Button.render({
+      env: 'sandbox', // Or 'sandbox',
+      client: {
+            sandbox:    'AW_pEcSCwchoRLD0Ml28cXYs5v-RDCiR8mr_rGKbJOc9kT8fwkiMvndfriSVGH4mgGypQeGjoc3ZNWcB',
+            production: 'ATVRdWHN7b55a9pMMGsNwbbuiSJYj0JR-LpKKON6iRVQPg0_M1FEXpPuD-3b1nj2MfqR230woUMF_H73'
+        },
+      commit: true, // Show a 'Pay Now' button
+
+      style: {
+        color: 'gold',
+        size: 'small'
+      },
+
+      payment: function(data, actions) {
+        /* 
+         * Set up the payment here 
+         */
+        var total = parseInt($('.paymentZone .totalAmount .amount').html());
+
+         return actions.payment.create({
+                payment: {
+                    transactions: [
+                        {
+                            amount: { total:total, currency: 'GBP' }
+                        }
+                    ]
+                }
+            });
+      },
+
+      onAuthorize: function(data, actions) {
+        /* 
+         * Execute the payment here 
+         */
+         return actions.payment.execute().then(function(payment) {
+            angular.element(document.querySelector('[data-ng-controller="shopCheckoutCtrl"]')).scope().PaymentSuccess();
+            // The payment is complete!
+            // You can now show a confirmation message to the customer
+        });
+      },
+
+      onCancel: function(data, actions) {
+        /* 
+         * Buyer cancelled the payment 
+         */
+      },
+
+      onError: function(err) {
+        /* 
+         * An error occurred during the transaction 
+         */
+      }
+    }, '#paypal-button');
+  </script>
