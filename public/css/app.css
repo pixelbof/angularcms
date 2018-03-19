@@ -120,22 +120,59 @@ body {
   padding-right: 0;
 }
 
+.showBasket {
+  font-weight: bold;
+  border: 1px solid #fff;
+  background: #363636;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.basketHolder .total {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 15px;
+}
+
 .productItem {
-  border-right: 1px solid #fff;
-  padding-right: 10px;
-  margin-right: 10px;
+  border: 1px solid #fff;
+  margin: 0 15px 10px 0;
+  padding: 15px;
+  max-height: 400px;
 }
 
-.productItem .price {
-  position: relative;
-  left: -20px;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 0 0 2px #000;
+.productItem .productName {
+  text-decoration: underline;
+  padding-bottom: 10px;
 }
 
-.productItem .size {
+.productItem .productImage {
+  width: 100%;
+  max-height: 120px;
+}
+
+.productItem .productDesc {
   font-weight: bold;
+  font-size: 15px;
+  margin: 10px 0;
+}
+
+.productItem .infoHolder {
+  margin: 10px 0;
+}
+
+.productItem .infoHolder .price {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.productItem .infoHolder .size {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.productItem .basketBtn {
+  margin-top: 20px;
 }
 
 .brandHeader {
@@ -181,14 +218,15 @@ a:visited {
   text-decoration: underline;
 }
 
-input[type=text], input[type=password], input[type=number], .form-control[readonly] {
+input[type=text], input[type=password], input[type=number], input[type=submit], input[type=button], .form-control[readonly] {
   color: #fff;
   border-radius: 0;
   border: 1px solid white;
   background: #363636;
+  padding: 5px 2px;
 }
 
-input[type=text]:focus, input[type=password]:focus, input[type=number]:focus, .form-control[readonly]:focus {
+input[type=text]:focus, input[type=password]:focus, input[type=number]:focus, input[type=submit]:focus, input[type=button]:focus, .form-control[readonly]:focus {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(0, 0, 0, 0.6);
   outline: 0 none;
   border-color: white;

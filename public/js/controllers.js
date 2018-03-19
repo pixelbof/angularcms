@@ -84,7 +84,6 @@ controller('shopCtrl', ['$scope', 'localStorage', '$rootScope', 'flashMessageSer
       }
 
       $scope.checkout = function() {
-        console.log("checkout pressed")
         $rootScope.products = $scope.basketProducts;
         $rootScope.totalAmount = $scope.totalPrice;
         $location.path("/shop/checkout");
@@ -93,25 +92,22 @@ controller('shopCtrl', ['$scope', 'localStorage', '$rootScope', 'flashMessageSer
 ])
 .controller('shopCheckoutCtrl', ['$scope', '$rootScope', '$location', '$route', '$log', 'shopFactory', 'flashMessageService',
   function($scope, $rootScope, $location, $route, $log, shopFactory, flashMessageService) {
-
+    console.log("shop checkout control")
     $scope.products = {};
     $scope.products = $rootScope.products;
 
     $scope.totalAmount = $rootScope.totalAmount;
 
-    $scope.PaymentSuccess = function() {
+    $scope.PaymentSuccess = function(address) {
+      $scope.userAddress = address;
       for(var i = 0; i < $scope.products.length; i++) {
         $scope.username = $scope.loggedInUser ? $scope.loggedInUser : "guest"
-        console.log("raw products items", $scope.products[i])
-
         $scope.productHistory = {};
         $scope.productHistory.userName = $scope.username;
-        $scope.productHistory.userAddress = $scope.products[i].userAddress;
+        $scope.productHistory.userAddress = $scope.userAddress;
         $scope.productHistory.productName = $scope.products[i].name;
         $scope.productHistory.productSize = $scope.products[i].size;
         $scope.productHistory.productPrice = $scope.products[i].price;
-
-        console.log("product history items", $scope.productHistory)
         
         shopFactory.setPaymentHistory($scope.productHistory).then(function(res) {
             $location.path("/shop/payment/success");
@@ -461,20 +457,29 @@ controller('AdminUserListCtrl', ['$scope','$rootScope', '$route', '$log', 'UserS
 
     }
 ])
-.controller('AdminAddEditShopCtrl', ['$scope', '$location', '$log', 'shopFactory', '$routeParams', '$location', 'flashMessageService', 
-  function($scope, $location, $log, shopFactory, $routeParams, flashMessageService) {
+.controller('AdminAddEditShopCtrl', ['$scope', '$location', '$timeout', '$log', 'shopFactory', '$routeParams', '$location', 'flashMessageService', 
+  function($scope, $location, $timeout, $log, shopFactory, $routeParams, flashMessageService) {
         $scope.shopItemContent = {};
         $scope.shopItemContent._id = $routeParams.id;
         $scope.heading = "Add a new shop item";
         $scope.productSizesSelect = ["small", "medium", "large"];
-
-        console.log($scope.shopItemContent)
 
         function getBase64(file) {
           var reader = new FileReader();
           reader.readAsDataURL(file);
           reader.onload = function () {
             $scope.shopItemContent.productImage = reader.result;
+
+            console.log("shop item to save", $scope.shopItemContent)
+            shopFactory.saveShopItem($scope.shopItemContent).then(
+              function() {
+                console.log("success")
+                $location.path('/admin/shop-display');
+              },
+              function() {
+                $log.error('error saving data');
+              }
+            );
           };
           reader.onerror = function (error) {
             console.log('Error: ', error);
@@ -494,6 +499,7 @@ controller('AdminUserListCtrl', ['$scope','$rootScope', '$route', '$log', 'UserS
         }
 
         $scope.saveShopItem = function() {
+          console.log("save shop item called")
           var files = document.getElementById('productImage').files;
           if(files.length > 0) {
             if(files[0].size <= 700000) {
@@ -503,18 +509,6 @@ controller('AdminUserListCtrl', ['$scope','$rootScope', '$route', '$log', 'UserS
               return false;
             }
           }
-
-          $timeout((function() {
-          shopFactory.saveShopItem($scope.shopItemContent).then(
-            function() {
-              flashMessageService.setMessage("Shop item saved Successfully");
-              $location.path('/admin/shop-display');
-            },
-            function() {
-              $log.error('error saving data');
-            }
-          );
-        }, 1000));
 
         };
     }

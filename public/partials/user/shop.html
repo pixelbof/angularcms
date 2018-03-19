@@ -12,7 +12,8 @@
             <hr />
         </div>
         <div ng-if="basketProducts < 1">No products Added</div>
-        <p>Total Amount: £{{totalPrice}}</p>
+        <hr />
+        <p class="total">Total Amount: £{{totalPrice}}</p>
         <input type="button" value="checkout" ng-click="checkout()" />
     </div>
 </div>
@@ -20,14 +21,16 @@
 <hr class="col-md-12" />
 <form>
 <div class="productItem col-md-3" ng-if="productLength > 0" ng-repeat="item in products">
-    <div class="row">
-        <h1 class="col-md-12">{{item.productName}}</h1>
-        <img src="{{item.productImage}}" />
-        <p class="col-md-12" ng-bind-html="item.productDescription | to_trusted"></p>
-        <p class="size pull-left">Size: {{item.productSize}}</p>
-        <p class="price pull-right">£{{item.productPrice}}</p>
+    <div class="col-md-12">
+        <h1 class=" productName">{{item.productName}}</h1>
+        <img class="productImage" src="{{item.productImage}}" />
+        <p class="productDesc" ng-bind-html="item.productDescription | to_trusted"></p>
+        <div class="row infoHolder">
+            <p class="size pull-left">Size: {{item.productSize}}</p>
+            <p class="price pull-right">£{{item.productPrice}}</p>
+        </div>
 
-        <input type = "submit" value = "Add" ng-click = "addToBasket(item.productName, item.productPrice, item.productSize)">
+        <input type = "submit" value = "Add to basket" class="basketBtn pull-right" ng-click = "addToBasket(item.productName, item.productPrice, item.productSize)">
     </div>
 </div>
 </form>

@@ -70,20 +70,55 @@ body {
      }
 }
 
-.productItem {
-    border-right: 1px solid #fff;
-    padding-right: 10px;
-    margin-right: 10px;
+.showBasket {
+    font-weight: bold;
+    border: 1px solid #fff;
+    background: rgb(54, 54, 54);
+    cursor: pointer;
+    padding: 5px;
+}
 
-    .price {
-        position: relative;
-        left: -20px;
+.basketHolder {
+    .total {
         font-weight: bold;
-        color: #fff;
-        text-shadow: 0 0 2px #000;
+        font-size: 15px;
+        margin-bottom: 15px;
     }
-    .size {
+}
+
+.productItem {
+    border: 1px solid #fff;
+    margin: 0 15px 10px 0;
+    padding: 15px;
+    max-height: 400px;
+
+    .productName {
+        text-decoration: underline;
+        padding-bottom: 10px;
+    }
+    .productImage {
+        width: 100%;
+        max-height: 120px;
+    }
+    .productDesc {
         font-weight: bold;
+        font-size: 15px;
+        margin: 10px 0;
+    }
+    .infoHolder {
+        margin: 10px 0;
+        .price {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .size {
+            font-weight: bold;
+            font-size: 20px;
+        }
+    }
+
+    .basketBtn {
+        margin-top: 20px;
     }
 }
 
@@ -139,7 +174,7 @@ a {
     border: 0;
 }
 
-input[type=text], input[type=password], input[type=number], .form-control[readonly]   {
+input[type=text], input[type=password], input[type=number], input[type=submit], input[type=button], .form-control[readonly]   {
     &:focus {
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(0, 0, 0, 0.6);
         outline: 0 none;
@@ -149,6 +184,7 @@ input[type=text], input[type=password], input[type=number], .form-control[readon
     border-radius: 0;
     border:1px solid white;
     background: rgb(54, 54, 54);
+    padding: 5px 2px;
 }
 
 .form-control[readonly] {

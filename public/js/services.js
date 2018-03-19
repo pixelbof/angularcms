@@ -41,6 +41,7 @@ angular.module('myApp.services', [])
         var id = shopItem._id;
 
         if (id == 0) {
+          console.log("shop item id", id)
           return $http.post('/api/shop/add', shopItem);
         } else {
           return $http.post('/api/shop/update', shopItem);

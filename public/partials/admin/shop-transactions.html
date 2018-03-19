@@ -10,6 +10,7 @@
       <th>Last Updated</th>
       <th>Order Ref</th>
       <th>User</th>
+      <th>Send to</th>
       <th>Product Name</th>
       <th>Size Ordered</th>
       <th>Product Price</th>
@@ -22,6 +23,7 @@
     <td>{{order.lastUpdated | date:'EEE dd MMM yy | h:mma'}}</td>
     <td>{{order._id}}</td>
     <td>{{order.userName}}</td>
+    <td>{{order.userAddress}}</td>
     <td>{{order.productName}}</td>
     <td>{{order.productSize}}</td>
     <td>{{order.productPrice}}</td>

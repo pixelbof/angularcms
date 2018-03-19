@@ -170,9 +170,10 @@ router.post('/shop/update', sessionCheck, function(request, response) {
 });
 
 router.post('/shop/payment/success', function(request, response) {
+
     var _paymentHistory = new OrderHistory({
         userName: request.body.userName,
-        useraddress: request.body.userAddress,
+        userAddress: request.body.userAddress,
         productName: request.body.productName,
         productSize: request.body.productSize,
         productPrice: request.body.productPrice
