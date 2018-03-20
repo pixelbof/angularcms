@@ -39,10 +39,10 @@ label {
     margin-bottom: 10px;
 }
 html {
-    height: 100%
+    min-height: 100%
 }
 body {
-    height: 100%;
+    min-height: 100%;
     background-color: #000;
     color: #fff;
     font-size: 14px;
@@ -192,7 +192,25 @@ input[type=text], input[type=password], input[type=number], input[type=submit], 
 }
 
 //Site specific styles
+#message-frame li {
+    position: relative;
+    .profilePicHolder {
+        width: 40px;
+        height: 40px;
+        overflow: hidden;
+        border-radius: 60px;
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        border: 1px solid #fff;
+        box-shadow: 2px 2px 4px #000;
 
+        img {
+            width: 100%;
+
+        }
+    }
+}
 #message {
     min-height: 104px;
     max-height: 104px;
@@ -230,7 +248,7 @@ input[type=text], input[type=password], input[type=number], input[type=submit], 
         list-style-type: none;
         margin-bottom: 10px;
         border-radius: 5px;
-        padding: 5px 10px;
+        padding: 5px 10px 5px 40px;
         background-color: #006699;
         float: left;
         min-width: 65%;
@@ -319,7 +337,6 @@ input[type=text], input[type=password], input[type=number], input[type=submit], 
 }
 
 .footer {
-    margin-top: -60px;
 }
 
 .socialBar {

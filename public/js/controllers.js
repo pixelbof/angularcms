@@ -1,14 +1,14 @@
 'use strict';
 //GLOBAL CONTROLLERS FOR WHOLE APP
 angular.module('myApp.controllers', []).
-controller('AppCtrl', ['$scope', '$rootScope', 'UserService','flashMessageService','$location', '$cookies', '$interval',
-    function($scope,$rootScope,UserService,flashMessageService,$location,$cookies,$interval) {
+controller('AppCtrl', ['$scope', '$rootScope', '$localstorage', 'UserService','flashMessageService','$location', '$cookies', '$interval',
+    function($scope,$rootScope,$localstorage,UserService,flashMessageService,$location,$cookies,$interval) {
         $scope.site = {
             logo: "img/houseology-logo.png"
         };
 
         $scope.location = $location['$$path'].split("/")[1];
-        $scope.userType = $cookies.get('userType');
+        $scope.userType = $localstorage.get('userType');
         $scope.user = $cookies.get('loggedInUser');
 
         $scope.$on('user-status-change', function(event, args) {
@@ -23,7 +23,6 @@ controller('AppCtrl', ['$scope', '$rootScope', 'UserService','flashMessageServic
         }, function(value) {
             if(value == 'disabled') {
                 $location.path("/");
-                $cookies.remove('userType', {path: '/'});
                 $cookies.remove('loggedInUser', {path: '/'});
                 flashMessageService.setMessage("The admin has disabled your account")
             }
@@ -169,13 +168,29 @@ controller('AdminTransactionsCtrl', ['$scope', 'localStorage', '$rootScope', 'fl
       }
     }
 ])
-.controller('liveStream', ['$scope','$cookies', 'AuthService','flashMessageService','$location', '$route',
-    function($scope,$cookies,AuthService,flashMessageService,$location,$route) {
+.controller('liveStream', ['$scope','$cookies','$localstorage', 'AuthService','UserService','flashMessageService','$location', '$route',
+    function($scope,$cookies,$localstorage,AuthService,UserService,flashMessageService,$location,$route) {
       var now = new Date();
+      $scope.profileImg = '';
+      
+      if($localstorage.get('chatName') == "") {
+        flashMessageService.setMessage("please create a chat name to be able to enter the chatroom")
+        $location.path('/user/profile/'+ $cookies.get('loggedInUser'));
+      } else {
+        if($localstorage.get('userType') == "admin") {
+          $scope.profileImg = "/img/profile/houseology-profile.jpg";
+        } else {
+          console.log(UserService.getProfilePic($scope.loggedInUser))
+          UserService.getProfilePic($scope.loggedInUser).then(function(data) {
+            $scope.profileImg = data.data;
+          });
+          
+        }
 
-      $scope.loggedInUser = $cookies.get('loggedInUser');
-      $scope.userType = $cookies.get('userType');
-
+        $scope.loggedInUser = $cookies.get('loggedInUser');
+        $scope.userType = $localstorage.get('userType');
+        $scope.chatName = $localstorage.get('chatName');
+      }
       $scope.sunday = now.getDay() == 0;
       $scope.hour = now.getHours() >= 13;
       
@@ -540,7 +555,7 @@ controller('AdminUserListCtrl', ['$scope','$rootScope', '$route', '$log', 'UserS
             if($scope.newUser.userType == '') {
               $scope.newUser.userType = 'user';
             }
-            console.log($scope.newUser)
+
             $scope.addUser($scope.newUser)
           }
         },
@@ -550,6 +565,7 @@ controller('AdminUserListCtrl', ['$scope','$rootScope', '$route', '$log', 'UserS
     };
 
     $scope.addUser = function() {
+      console.log("scope new user", $scope.newUser)
       UserRegisterService.addUser($scope.newUser).then(
       function(response) {
         flashMessageService.setMessage("New user added successfully");
@@ -567,23 +583,33 @@ controller('AdminUserListCtrl', ['$scope','$rootScope', '$route', '$log', 'UserS
     };
   }
 ]).
-controller('CentralLoginCtrl', ['$scope', '$rootScope', '$location', '$cookies', 'AuthService','$log','flashMessageService',
-    function($scope, $rootScope, $location, $cookies, AuthService, $log, flashMessageService) {
+controller('CentralLoginCtrl', ['$scope','$localstorage', '$rootScope', '$location', '$cookies', 'AuthService','$log','flashMessageService',
+    function($scope,$localstorage, $rootScope, $location, $cookies, AuthService, $log, flashMessageService) {
 
       $scope.credentials = {
         username: '',
         password: '',
+        chatName: '',
         userType: '',
         accountStatus:''
       };
 
       $scope.login = function(credentials) {
+        console.log("credentials", credentials)
         AuthService.login(credentials).then(
           function(res, err) {
+            console.log(res.data)
+            if(res.data.userType == "admin") {
+              $localstorage.set('chatName', "Houseology Admin");
+            } else {
+              var chatName = (res.data.chatName) ? res.data.chatName : credentials.chatName;
+              $localstorage.set('chatName', chatName);
+            }
+
             $cookies.put('loggedInUser', res.data.user);
-            $cookies.put('userType', res.data.userType);
+            $localstorage.set('userType', res.data.userType);
             
-            if(res.data.userType == "admin"  && res.data.accountStatus == "active") {
+            if(res.data.userType == "admin") {
                 $location.path('/admin/dashboard');
             } else if(res.data.userType == "user" && res.data.accountStatus == "active") {
                 $location.path('/user/profile/'+ $cookies.get('loggedInUser'));
@@ -601,18 +627,17 @@ controller('CentralLoginCtrl', ['$scope', '$rootScope', '$location', '$cookies',
         };
     }
 ]).
-controller('CentralLogoutCtrl', ['$scope', '$location', '$cookies', 'AuthService','$log','flashMessageService',
-    function($scope, $location, $cookies, AuthService, $log, flashMessageService) {
+controller('CentralLogoutCtrl', ['$scope','$localstorage', '$location', '$cookies', 'AuthService','$log','flashMessageService',
+    function($scope,$localstorage, $location, $cookies, AuthService, $log, flashMessageService) {
       $cookies.remove('loggedInUser', { path: '/' });
       $scope.loggedInUser = '';
       AuthService.logout().then(
         function() {
-          if($cookies.get('userType') == 'user') {
+          if($localstorage.get('userType') == 'user') {
               $location.path('/');
           } else {
               $location.path('/admin/login');
           }
-          $cookies.remove('userType', { path: '/' });
           flashMessageService.setMessage("Successfully logged out");
         }, 
         function(err) {

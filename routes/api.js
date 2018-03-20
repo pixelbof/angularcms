@@ -302,6 +302,7 @@ router.post('/add-user', function(request, response) {
         username: request.body.username,
         password: hash,
         userType: userType,
+        chatName: request.body.chatName,
         accountStatus: request.body.accountStatus,
         dateAdded: new Date(Date.now())
     });
@@ -364,7 +365,11 @@ router.get('/get-profile-pic/:user', function(request, response) {
         username: request.params.user
     }, function(err, data) {
         try {
-            return response.send(data.profileImage)
+            if(data == null) {
+                return response.send("/img/profile/generic.jpg");
+            } else {
+                return response.send(data.profileImage);
+            }
         } catch(err) {
             return response.send('false')
         }
@@ -466,6 +471,7 @@ router.post('/login', function(request, response) {
       return response.send(401, "User Doesn't exist");
     } else {
       var usr = data;
+      console.log("user data", usr)
       if (username == usr.username && bcrypt.compareSync(password, usr.password)) {
         adminUser.update({
             username: usr.username
@@ -477,7 +483,7 @@ router.post('/login', function(request, response) {
 
         request.session.regenerate(function() {
           request.session.user = username;
-          return response.send({user: username, userType: usr.userType, accountStatus: usr.accountStatus});
+          return response.send({user: username, userType: usr.userType, chatName: usr.chatName, accountStatus: usr.accountStatus});
 
         });
       } else {
