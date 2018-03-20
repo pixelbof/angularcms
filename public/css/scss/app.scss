@@ -1,0 +1,349 @@
+@import 'reset';
+@import url('https://fonts.googleapis.com/css?family=Old+Standard+TT');
+@import 'variables';
+
+//Global setting styles
+h1 {
+    font-size: 1.5em;
+}
+.clearfix {
+    clear: both;
+}
+
+.paymentZone{
+    background-color: #fff;
+    padding: 10px;
+    color: #000;
+}
+
+.basket {
+    position: relative;
+}
+
+.basketHolder {
+    position: absolute;
+    right: 0;
+    top: 20px;
+    background-color: #000;
+    padding: 15px;
+    z-index: 1000;
+}
+.no-padding {
+    padding-left: 0;
+    padding-right: 0;
+}
+.margin-right {
+    padding-right: 15px;
+}
+label {
+    margin-bottom: 10px;
+}
+html {
+    min-height: 100%
+}
+body {
+    min-height: 100%;
+    background-color: #000;
+    color: #fff;
+    font-size: 14px;
+    font-family: 'Old Standard TT', serif;
+
+    @media screen and (max-width: $break-small) {
+        background-image: none;
+    }
+
+    @media screen and (min-width: $break-large) {
+        background-image: url('../img/bgimage.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: top center;
+    }
+}
+
+#navbar {
+    float: none;
+     span {
+         & > div {
+             padding-left: 0;
+             padding-right: 0;
+         }
+     }
+}
+
+.showBasket {
+    font-weight: bold;
+    border: 1px solid #fff;
+    background: rgb(54, 54, 54);
+    cursor: pointer;
+    padding: 5px;
+}
+
+.basketHolder {
+    .total {
+        font-weight: bold;
+        font-size: 15px;
+        margin-bottom: 15px;
+    }
+}
+
+.productItem {
+    border: 1px solid #fff;
+    margin: 0 15px 10px 0;
+    padding: 15px;
+    max-height: 400px;
+
+    .productName {
+        text-decoration: underline;
+        padding-bottom: 10px;
+    }
+    .productImage {
+        width: 100%;
+        max-height: 120px;
+    }
+    .productDesc {
+        font-weight: bold;
+        font-size: 15px;
+        margin: 10px 0;
+    }
+    .infoHolder {
+        margin: 10px 0;
+        .price {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .size {
+            font-weight: bold;
+            font-size: 20px;
+        }
+    }
+
+    .basketBtn {
+        margin-top: 20px;
+    }
+}
+
+.brandHeader {
+    width: 100%;
+    text-align: center;
+    
+    .brandLogo {
+        img {
+            width: 20%;
+        }
+    }
+}
+
+.mainContent {
+    min-height: calc(100vh - 170px);
+}
+
+a {
+    color: inherit;
+
+    &:visited {
+        color: inherit;
+    }
+
+}
+
+.navbar {
+    &.navbar-inverse {
+        background-image: none !important;
+
+        .navbar-nav {
+            &.mainNav {
+                li {
+                    a {
+                        font-size: 1.2em;
+                    }
+                }
+            }
+            &>li {
+                &>a {
+                    color: #fff;
+                    padding: 10px 0 15px 20px;
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+
+    background:rgba(0,0,0,0.6);
+    border: 0;
+}
+
+input[type=text], input[type=password], input[type=number], input[type=submit], input[type=button], .form-control[readonly]   {
+    &:focus {
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(0, 0, 0, 0.6);
+        outline: 0 none;
+        border-color: white;
+    }
+    color: #fff;
+    border-radius: 0;
+    border:1px solid white;
+    background: rgb(54, 54, 54);
+    padding: 5px 2px;
+}
+
+.form-control[readonly] {
+    color: #666;
+}
+
+//Site specific styles
+#message-frame li {
+    position: relative;
+    .profilePicHolder {
+        width: 40px;
+        height: 40px;
+        overflow: hidden;
+        border-radius: 60px;
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        border: 1px solid #fff;
+        box-shadow: 2px 2px 4px #000;
+
+        img {
+            width: 100%;
+
+        }
+    }
+}
+#message {
+    min-height: 104px;
+    max-height: 104px;
+    overflow-y: auto;
+    border: 1px solid #fff;
+    outline: 0;
+    background-color: #000;
+    margin-bottom: 20px;
+}
+
+#messageSend {
+    position: relative;
+
+    .emojiList {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+}
+
+.messageSection {
+    .nav-tabs {
+        li {
+            a {
+                text-shadow: none;
+            }
+        }
+    }
+}
+
+#message-frame {
+    padding-left: 0;
+
+    li {
+        list-style-type: none;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        padding: 5px 10px 5px 40px;
+        background-color: #006699;
+        float: left;
+        min-width: 65%;
+        max-width: 65%;
+
+        &.myMessage {
+            float: right;
+            background-color: #ff6600;
+        }
+
+        &.adminMessage {
+            background-color: #660033;
+        }
+
+        span {
+            font-weight: bold;
+        }
+        
+        .time {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        &.systemMessageContainer {
+            background-color: #999999;
+            color: #fff;
+            min-width: 100%;
+            max-width: 100%;
+        }
+    }
+}
+
+#userList {
+    @extend #message-frame;
+}
+
+.messageSection {
+    .nav-tabs {
+        border-bottom: 0;
+    }
+}
+
+.message-container, .userList {
+    @extend #message;
+    position: relative;
+    background: none;
+    background-color: #000;
+    min-height: 336px;
+    max-height: 336px;
+
+        .userTyping {
+            width: 60%;
+            position: absolute;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.8);
+            display: none;
+        }
+}
+
+.emojiBtn {
+    cursor: pointer;
+    @media screen and (min-width: $break-large) {
+        margin-bottom: 41px;
+    }
+}
+
+.emojiList {
+    margin-top: 15px;
+}
+
+.vodContainer {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.player {
+    max-height: 362px;
+    max-width: 642px;
+    min-height: 362px;
+    min-width: 642px;
+    border: 1px solid #fff;
+    background-image: url('https://images.dacast.com/76581/sf-429337-1.png?1499737088');
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 0;
+}
+
+.footer {
+}
+
+.socialBar {
+    margin-top: -5px;
+    li {
+        list-style-type: none;
+        display: inline-block;
+        margin-left: 10px;
+    }
+}

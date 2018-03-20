@@ -1,0 +1,52 @@
+<h1 class="col-md-6">Shop</h1>
+<div class="col-md-6 basket">
+    <p class="pull-right">Basket: {{basketProducts.length}} | £{{totalPrice}} <span class="showBasket">></span></p>
+
+    <div class="basketHolder">
+        <div ng-if="basketProducts" ng-repeat="products in basketProducts">
+            <div class="itemHolder">
+                <h1>{{products.name}}</h1>
+                <p>{{products.size}}</p>
+                <p>£{{products.price}}</p>
+            </div>
+            <hr />
+        </div>
+        <div ng-if="basketProducts < 1">No products Added</div>
+        <hr />
+        <p class="total">Total Amount: £{{totalPrice}}</p>
+        <input type="button" value="checkout" ng-click="checkout()" />
+    </div>
+</div>
+
+<hr class="col-md-12" />
+<form>
+<div class="productItem col-md-3" ng-if="productLength > 0" ng-repeat="item in products">
+    <div class="col-md-12">
+        <h1 class=" productName">{{item.productName}}</h1>
+        <img class="productImage" src="{{item.productImage}}" />
+        <p class="productDesc" ng-bind-html="item.productDescription | to_trusted"></p>
+        <div class="row infoHolder">
+            <p class="size pull-left">Size: {{item.productSize}}</p>
+            <p class="price pull-right">£{{item.productPrice}}</p>
+        </div>
+
+        <input type = "submit" value = "Add to basket" class="basketBtn pull-right" ng-click = "addToBasket(item.productName, item.productPrice, item.productSize)">
+    </div>
+</div>
+</form>
+
+<div class="col-md-4" ng-if="productLength <= 0">
+    <div class="row">
+        <p class="col-md-8">No products are available at the moment, but please try again soon.</p>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $(".basketHolder").hide();
+
+        $(".showBasket").click(function() {
+            $(".basketHolder").slideToggle();
+        })
+    })
+</script>

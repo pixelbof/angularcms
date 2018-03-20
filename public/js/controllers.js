@@ -1,29 +1,28 @@
 'use strict';
 //GLOBAL CONTROLLERS FOR WHOLE APP
 angular.module('myApp.controllers', []).
-controller('AppCtrl', ['$scope', '$rootScope', 'UserService','flashMessageService','$location', '$cookies', '$interval',
-    function($scope,$rootScope,UserService,flashMessageService,$location,$cookies,$interval) {
+controller('AppCtrl', ['$scope', '$rootScope', '$localstorage', 'UserService','flashMessageService','$location', '$cookies', '$interval',
+    function($scope,$rootScope,$localstorage,UserService,flashMessageService,$location,$cookies,$interval) {
         $scope.site = {
             logo: "img/houseology-logo.png"
         };
 
         $scope.location = $location['$$path'].split("/")[1];
-        $scope.userType = $cookies.get('userType');
+        $scope.userType = $localstorage.get('userType');
         $scope.user = $cookies.get('loggedInUser');
 
-        /*var disableCheck = $interval(function() {
+        $scope.$on('user-status-change', function(event, args) {
           UserService.checkAccountStatus($scope.user).then(
-          function(response) {
-            $rootScope.accountStatus = response.data.accountStatus;
-          });
-        }, 1000);*/
+            function(response) {
+              $rootScope.accountStatus = response.data.accountStatus;
+            });
+        });
         
         $scope.$watch(function () {
             return $rootScope.accountStatus;
         }, function(value) {
             if(value == 'disabled') {
                 $location.path("/");
-                $cookies.remove('userType', {path: '/'});
                 $cookies.remove('loggedInUser', {path: '/'});
                 flashMessageService.setMessage("The admin has disabled your account")
             }
@@ -61,13 +60,137 @@ controller('v-pods', ['$scope','$cookies', 'vodFactory', '$routeParams', '$sce',
         }
      );
 }]).
-controller('liveStream', ['$scope','$cookies', 'AuthService','flashMessageService','$location', '$route',
-    function($scope,$cookies,AuthService,flashMessageService,$location,$route) {
+controller('shopCtrl', ['$scope', 'localStorage', '$rootScope', 'flashMessageService','$location', '$route', 'shopFactory', '$sce',
+    function($scope,localStorage,$rootScope,flashMessageService,$location,$route, shopFactory, $sce) {
+      shopFactory.getItems().then(function(res) {
+        $scope.basketProducts = [];
+        $scope.currentPrice = 0;
+        $scope.basketLength = 0;
+        $scope.totalPrice = 0; 
+        $scope.products = '';
+        $scope.products = res.data;
+
+        $scope.products.description = $sce.trustAsHtml(res.data.productDescription);
+        $scope.productLength = res.data.length;
+      }, function(err) {
+        flashMessageService("unable to retrieve products");
+      });
+
+      $scope.addToBasket = function(productName, productPrice, productSize) {
+        $scope.basketProducts.push({name:productName, price:productPrice, size:productSize});
+        $scope.currentPrice = $scope.totalPrice + productPrice;
+        $scope.totalPrice = $scope.currentPrice;
+      }
+
+      $scope.checkout = function() {
+        $rootScope.products = $scope.basketProducts;
+        $rootScope.totalAmount = $scope.totalPrice;
+        $location.path("/shop/checkout");
+      }
+    }
+])
+.controller('shopCheckoutCtrl', ['$scope', '$rootScope', '$location', '$route', '$log', 'shopFactory', 'flashMessageService',
+  function($scope, $rootScope, $location, $route, $log, shopFactory, flashMessageService) {
+    console.log("shop checkout control")
+    $scope.products = {};
+    $scope.products = $rootScope.products;
+
+    $scope.totalAmount = $rootScope.totalAmount;
+
+    $scope.PaymentSuccess = function(address) {
+      $scope.userAddress = address;
+      for(var i = 0; i < $scope.products.length; i++) {
+        $scope.username = $scope.loggedInUser ? $scope.loggedInUser : "guest"
+        $scope.productHistory = {};
+        $scope.productHistory.userName = $scope.username;
+        $scope.productHistory.userAddress = $scope.userAddress;
+        $scope.productHistory.productName = $scope.products[i].name;
+        $scope.productHistory.productSize = $scope.products[i].size;
+        $scope.productHistory.productPrice = $scope.products[i].price;
+        
+        shopFactory.setPaymentHistory($scope.productHistory).then(function(res) {
+            $location.path("/shop/payment/success");
+        },
+        function(err) {
+          $log.error('error saving data: ' + JSON.stringify(err));
+        });
+      }
+    }
+
+    $scope.PaymentError = function() {
+      console.log("payment error hit")
+      
+      
+    }
+
+    $scope.PaymentCancelled = function() {
+      console.log("payment cancelled hit")
+      
+      
+    }
+
+    /*shopFactory.getItems().then(
+      function(response) {
+        $scope.shopItemContent = response.data;
+      },
+      function(err) {
+        $log.error(err);
+      });
+    }*/
+  }
+
+])
+.controller('shopPaymentSuccessCtrl', ['$scope', '$rootScope', '$location', '$route', '$log', 'shopFactory', 'flashMessageService',
+  function($scope, $rootScope, $location, $route, $log, shopFactory, flashMessageService) {
+    $scope.products = $rootScope.products;
+
+    console.log("success payment" + $rootScope.products)
+  }]).
+controller('AdminTransactionsCtrl', ['$scope', 'localStorage', '$rootScope', 'flashMessageService','$location', '$route', 'shopFactory', '$sce',
+    function($scope,localStorage,$rootScope,flashMessageService,$location,$route, shopFactory, $sce) {
+      $scope.orders = {};
+      $scope.statusUpdate = ["processing", "delayed", "posted", "out of stock", "cancelled", "refunded"];
+
+      shopFactory.getCurrentTransactions().then(function(res) {
+        $scope.orders = res.data;
+      }, function(err) {
+        flashMessageService("unable to retrieve products");
+      });
+
+      $scope.updateStatus = function(id, status) {
+          shopFactory.updateTransaction(id, status).then(function(res) {
+            flashMessageService.setMessage(res.data);
+            $route.reload();
+          }, function(err) {
+            flashMessageService.setMessage("unable to update status of this order");
+          });
+        
+      }
+    }
+])
+.controller('liveStream', ['$scope','$cookies','$localstorage', 'AuthService','UserService','flashMessageService','$location', '$route',
+    function($scope,$cookies,$localstorage,AuthService,UserService,flashMessageService,$location,$route) {
       var now = new Date();
+      $scope.profileImg = '';
+      
+      if($localstorage.get('chatName') == "") {
+        flashMessageService.setMessage("please create a chat name to be able to enter the chatroom")
+        $location.path('/user/profile/'+ $cookies.get('loggedInUser'));
+      } else {
+        if($localstorage.get('userType') == "admin") {
+          $scope.profileImg = "/img/profile/houseology-profile.jpg";
+        } else {
+          console.log(UserService.getProfilePic($scope.loggedInUser))
+          UserService.getProfilePic($scope.loggedInUser).then(function(data) {
+            $scope.profileImg = data.data;
+          });
+          
+        }
 
-      $scope.loggedInUser = $cookies.get('loggedInUser');
-      $scope.userType = $cookies.get('userType');
-
+        $scope.loggedInUser = $cookies.get('loggedInUser');
+        $scope.userType = $localstorage.get('userType');
+        $scope.chatName = $localstorage.get('chatName');
+      }
       $scope.sunday = now.getDay() == 0;
       $scope.hour = now.getHours() >= 13;
       
@@ -159,8 +282,8 @@ function($scope, $timeout, $log, UserService, $routeParams, $location, flashMess
 
     }
 ]).
-controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'flashMessageService',
-  function($scope, $route, $log, UserService, flashMessageService) {
+controller('AdminUserListCtrl', ['$scope','$rootScope', '$route', '$log', 'UserService', 'flashMessageService',
+  function($scope, $rootScope, $route, $log, UserService, flashMessageService) {
     UserService.getUsers().then(
       function(response) {
         $scope.allUsers = response.data;
@@ -183,6 +306,7 @@ controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'fla
         UserService.disableUser(id).then(
           function() {
             flashMessageService.setMessage("User "+ id +" disabled Successfully");
+            $rootScope.$broadcast('user-status-change');
             $route.reload();
           }, function(err) {
             $log.error(err);
@@ -194,6 +318,7 @@ controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'fla
         UserService.enableUser(id).then(
           function() {
             flashMessageService.setMessage("User "+ id +" enabled Successfully");
+            $rootScope.$broadcast('user-status-change');
             $route.reload();
           }, function(err) {
             $log.error(err);
@@ -302,8 +427,6 @@ controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'fla
         $scope.heading = "Add a new social media item";
         $scope.socialItem = ["Facebook", "Twitter", "TuneIn", "YouTube", "Instagram", "Reddit", "Pinterest", "Tumblr", "Google+", "LinkedIn", "iTunes"];
 
-        console.log($scope.socialMediaContent)
-
         if ($scope.socialMediaContent._id !== 0) {
           $scope.heading = "Update existing social media item";
           socialFactory.getSocialMediaContent($scope.socialMediaContent._id).then(
@@ -329,6 +452,82 @@ controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'fla
         };
     }
 ])
+.controller('AdminShopDisplayCtrl', ['$scope', '$route', '$log', 'shopFactory', '$location', 'flashMessageService',
+  function($scope, $route, $log, shopFactory, $location, flashMessageService) {
+    
+    shopFactory.getItems().then(
+      function(response) {
+        $scope.shopItemContent = response.data;
+      },
+      function(err) {
+        $log.error(err);
+      });
+
+      $scope.deleteSocialMedia = function(id) {
+        shopFactory.deleteSocialMedia(id).then(function() {
+            flashMessageService.setMessage("Social media item deleted Successfully");
+            $route.reload();
+        });
+      };
+
+    }
+])
+.controller('AdminAddEditShopCtrl', ['$scope', '$location', '$timeout', '$log', 'shopFactory', '$routeParams', '$location', 'flashMessageService', 
+  function($scope, $location, $timeout, $log, shopFactory, $routeParams, flashMessageService) {
+        $scope.shopItemContent = {};
+        $scope.shopItemContent._id = $routeParams.id;
+        $scope.heading = "Add a new shop item";
+        $scope.productSizesSelect = ["small", "medium", "large"];
+
+        function getBase64(file) {
+          var reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = function () {
+            $scope.shopItemContent.productImage = reader.result;
+
+            console.log("shop item to save", $scope.shopItemContent)
+            shopFactory.saveShopItem($scope.shopItemContent).then(
+              function() {
+                console.log("success")
+                $location.path('/admin/shop-display');
+              },
+              function() {
+                $log.error('error saving data');
+              }
+            );
+          };
+          reader.onerror = function (error) {
+            console.log('Error: ', error);
+          };
+        }
+
+        if ($scope.shopItemContent._id != 0) {
+          $scope.heading = "Update existing item";
+          shopFactory.getItems($scope.shopItemContent._id).then(
+              function(response) {
+                $scope.shopItemContent = response.data;
+                $log.info($scope.shopItemContent);
+              },
+              function(err) {
+                $log.error(err);
+              });
+        }
+
+        $scope.saveShopItem = function() {
+          console.log("save shop item called")
+          var files = document.getElementById('productImage').files;
+          if(files.length > 0) {
+            if(files[0].size <= 700000) {
+              getBase64(files[0])
+            } else {
+              flashMessageService.setMessage("The file you supplied is over 700kb");
+              return false;
+            }
+          }
+
+        };
+    }
+])
 
 //CENTRAL CONTROLLERS FOR ALL USERS
 .controller('CentralRegisterCtrl', ['$scope','$controller','$rootScope', '$log','$location', 'UserRegisterService', 'UsernameCheckService', 'flashMessageService',
@@ -337,12 +536,17 @@ controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'fla
         username: '',
         password: '',
         userType: '',
+        email: '',
+        passwordPin: '',
+        chatName: '',
         accountStatus: 'active',
     };
 
     $scope.userTypes = ['user', 'admin'];
 
     $scope.checkUsername = function() {
+      $scope.newUser.username = $scope.newUser.email;
+
       UsernameCheckService.checkUsername($scope.newUser.username).then(
         function(res) {
           if(res.data !== 'false') {
@@ -351,7 +555,7 @@ controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'fla
             if($scope.newUser.userType == '') {
               $scope.newUser.userType = 'user';
             }
-            console.log($scope.newUser)
+
             $scope.addUser($scope.newUser)
           }
         },
@@ -361,6 +565,7 @@ controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'fla
     };
 
     $scope.addUser = function() {
+      console.log("scope new user", $scope.newUser)
       UserRegisterService.addUser($scope.newUser).then(
       function(response) {
         flashMessageService.setMessage("New user added successfully");
@@ -378,23 +583,33 @@ controller('AdminUserListCtrl', ['$scope', '$route', '$log', 'UserService', 'fla
     };
   }
 ]).
-controller('CentralLoginCtrl', ['$scope', '$rootScope', '$location', '$cookies', 'AuthService','$log','flashMessageService',
-    function($scope, $rootScope, $location, $cookies, AuthService, $log, flashMessageService) {
+controller('CentralLoginCtrl', ['$scope','$localstorage', '$rootScope', '$location', '$cookies', 'AuthService','$log','flashMessageService',
+    function($scope,$localstorage, $rootScope, $location, $cookies, AuthService, $log, flashMessageService) {
 
       $scope.credentials = {
         username: '',
         password: '',
+        chatName: '',
         userType: '',
         accountStatus:''
       };
 
       $scope.login = function(credentials) {
+        console.log("credentials", credentials)
         AuthService.login(credentials).then(
           function(res, err) {
+            console.log(res.data)
+            if(res.data.userType == "admin") {
+              $localstorage.set('chatName', "Houseology Admin");
+            } else {
+              var chatName = (res.data.chatName) ? res.data.chatName : credentials.chatName;
+              $localstorage.set('chatName', chatName);
+            }
+
             $cookies.put('loggedInUser', res.data.user);
-            $cookies.put('userType', res.data.userType);
+            $localstorage.set('userType', res.data.userType);
             
-            if(res.data.userType == "admin"  && res.data.accountStatus == "active") {
+            if(res.data.userType == "admin") {
                 $location.path('/admin/dashboard');
             } else if(res.data.userType == "user" && res.data.accountStatus == "active") {
                 $location.path('/user/profile/'+ $cookies.get('loggedInUser'));
@@ -412,18 +627,17 @@ controller('CentralLoginCtrl', ['$scope', '$rootScope', '$location', '$cookies',
         };
     }
 ]).
-controller('CentralLogoutCtrl', ['$scope', '$location', '$cookies', 'AuthService','$log','flashMessageService',
-    function($scope, $location, $cookies, AuthService, $log, flashMessageService) {
+controller('CentralLogoutCtrl', ['$scope','$localstorage', '$location', '$cookies', 'AuthService','$log','flashMessageService',
+    function($scope,$localstorage, $location, $cookies, AuthService, $log, flashMessageService) {
       $cookies.remove('loggedInUser', { path: '/' });
       $scope.loggedInUser = '';
       AuthService.logout().then(
         function() {
-          if($cookies.get('userType') == 'user') {
+          if($localstorage.get('userType') == 'user') {
               $location.path('/');
           } else {
               $location.path('/admin/login');
           }
-          $cookies.remove('userType', { path: '/' });
           flashMessageService.setMessage("Successfully logged out");
         }, 
         function(err) {

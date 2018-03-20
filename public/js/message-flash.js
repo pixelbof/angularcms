@@ -24,7 +24,7 @@ directive('messageFlash', [function() {
         }, 2500);
       })
     },
-    template: '<p ng-if="isVisible" class="alert alert-info">{{message}}</p>'
+    template: '<p ng-if="isVisible">{{message}}</p>'
     }
   }
 ]);

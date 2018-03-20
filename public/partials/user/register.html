@@ -1,25 +1,48 @@
 <h1>Register</h1>
 <hr/>
 
-<div class="col-md-6">
+
 <form role="form" id="login" ng-submit="checkUsername(newUser)">
-<div class="form-group">
-<label>Username (This will also be your live chat username)</label>
-<input class="form-control" type="text" ng-model="newUser.username" required/>
-</div>
-<div class="form-group">
-<label>Password</label>
-<input class="form-control" type="password"  ng-model="newUser.password" required/>
-</div>
+    <div class="col-md-6">
+            <div class="form-group">
+                    <label>Email (This will also be your username)</label>
+                    <input class="form-control" type="text" ng-model="newUser.email" required/>
+            </div>
+        <div class="form-group">
+            <label>Username</label>
+            <input class="form-control" type="text" ng-model="newUser.email" readonly/>
+        </div>
+        <div class="form-group">
+            <div class="col-md-6 no-padding margin-right"><label>Password</label>
+                <input class="form-control" type="password" id="password" required/></div>
+            <div class="col-md-6 no-padding"><label>Password Confirm</label>
+                <input class="form-control" type="password" ng-model="newUser.password" id="password_confirm" onBlur="check(this)" required/>
+                <script language='javascript' type='text/javascript'>
+                    function check(input) {
+                        if (input.value != document.getElementById('password').value) {
+                            input.setCustomValidity('Password Must Matching.');
+                        } else {
+                            // input is valid -- reset the error message
+                            input.setCustomValidity('');
+                        }
+                    }
+                </script></div>
+                <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+                <label>Password recovery pin</label>
+                <input class="form-control" type="text" maxlength="4" ng-model="newUser.passwordPin" id="passwordPin" required/>
+            </div>
+    </div>
+    </div>
 
-<input type="submit" class="btn btn-success" value="Create Account">
-</div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Chat Nickname (max 20 chars)</label>
+            <input class="form-control" type="text" maxlength="20" ng-model="newUser.chatName" id="chatName" required/>
+        </div>
+    </div>
+
+
+    <input type="submit" class="btn btn-success pull-right" value="Create Account">
 </form>
-</div>
-
-<div class="col-md-6  hidden-sm hidden-xs">
-    <h2>Information:</h2>
-    <p>Please remember that your username will be your nickname within live chat, 
-        <strong>you will not be able to change this</strong>, also we have created a brand new profile system which will allow you
-        to customise your own experience within the new website.</p>
-</div>

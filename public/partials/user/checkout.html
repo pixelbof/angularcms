@@ -1,0 +1,92 @@
+<h1>Checkout:</h1>
+<hr/>
+
+<div class="col-md-8">
+    <h1>Your Address:</h1>
+    <textarea class="form-control" id="userAddress" rows="5" placeholder="house name/number&#10;street name&#10;town/city&#10;county&#10;postcode"></textarea>
+</div>
+
+<div class="col-md-4 paymentZone" data-ng-controller="shopCheckoutCtrl">
+    <div class="col-md-12" style="margin-bottom: 15px;">
+        <div class="product" ng-repeat="item in products">
+            <h1>{{item.name}}</h1>
+            <p>{{item.size}}</p>
+            <p>Price: £{{item.price}}.00</p>
+
+            <hr />
+        </div>
+        <hr />
+
+        <span class="totalAmount pull-right">Total Amount: £<span class="amount">{{totalAmount}}.00</span></span>
+
+    </div>
+
+    <div id="paypal-button" class="pull-right"></div>
+</div>
+
+  <script>
+    paypal.Button.render({
+      env: 'production', // Or 'sandbox',
+      client: {
+            sandbox:    'AW_pEcSCwchoRLD0Ml28cXYs5v-RDCiR8mr_rGKbJOc9kT8fwkiMvndfriSVGH4mgGypQeGjoc3ZNWcB',
+            production: 'ATVRdWHN7b55a9pMMGsNwbbuiSJYj0JR-LpKKON6iRVQPg0_M1FEXpPuD-3b1nj2MfqR230woUMF_H73'
+        },
+      commit: true, // Show a 'Pay Now' button
+
+      style: {
+        color: 'gold',
+        size: 'small'
+      },
+
+      payment: function(data, actions) {
+        /* 
+         * Set up the payment here 
+         */
+        var total = parseInt($('.paymentZone .totalAmount .amount').html());
+
+         return actions.payment.create({
+                payment: {
+                    transactions: [
+                        {
+                            amount: { total:total, currency: 'GBP' }
+                        }
+                    ]
+                }
+            });
+      },
+
+      onAuthorize: function(data, actions) {
+        /* 
+         * Execute the payment here 
+         */
+         return actions.payment.execute().then(function(payment) {
+            var address = $("#userAddress").val();
+            angular.element(document.querySelector('[data-ng-controller="shopCheckoutCtrl"]')).scope().PaymentSuccess(address);
+            // The payment is complete!
+            // You can now show a confirmation message to the customer
+        });
+      },
+
+      onCancel: function(data, actions) {
+        /* 
+         * Buyer cancelled the payment 
+         */
+      },
+
+      onError: function(err) {
+        /* 
+         * An error occurred during the transaction 
+         */
+      }
+    }, '#paypal-button');
+
+    $("#paypal-button").hide();
+
+    $("#userAddress").keyup(function() {
+        if($("#userAddress").val() != "") {
+            $("#paypal-button").show(); 
+        } else {
+            $("#paypal-button").hide();
+        }
+    });
+  </script>

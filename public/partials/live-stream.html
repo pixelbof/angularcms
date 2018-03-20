@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-8">
         <h1>Live Stream</h1>
-        <script id="76581_c_421422" width="100%" height="420" src="//player.dacast.com/js/player.js"  class="dacast-video"></script>
+        <script id="76581_c_421422" width="100%" height="420" src="http://player.dacast.com/js/player.js"  class="dacast-video"></script>
     </div>
 
     <div class="col-md-4" ng-if="!loggedInUser"><a href="/user/register">Register</a> or <a href="/admin/login">Login</a> to interact with the live show</div>
@@ -23,7 +23,7 @@
                     <div class="userTyping">user is typing...</div>
                 </div>
 
-                <div id="messageSend" data-user='{{loggedInUser}}' data-usertype='{{userType}}'>
+                <div id="messageSend" data-user='{{chatName}}' data-usertype='{{userType}}' data-profileimg='{{profileImg}}'>
                     <div id="messageControl" class="clearfix">
                         <div id="message" class="col-md-9" contenteditable="true"></div>
                         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -51,10 +51,11 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
-var username = Cookies.get('loggedInUser');
+var username = localStorage.getItem("chatName");
 //var socket = io.connect('http://localhost:3001', {'query': '&user='+username, path: '/socket.io/', transports: ['websocket', 'polling']});
-var socket = io.connect('https://houseologychat.herokuapp.com', {path: '/socket.io/', transports: ['websocket']});
+var socket = io.connect('https://houseologychat.herokuapp.com', {'query': '&user='+username, path: '/socket.io/', transports: ['websocket', 'polling']});
 var usertype;
+var _profilePic;
 var message;
 var html;
 var emojis = ['angel.svg', 
@@ -81,17 +82,17 @@ var emojis = ['angel.svg',
 
 socket.on('welcome', function(data) {
     usertype= $("#messageSend").data('usertype');
+    
+    
     message = "<span class='systemMessage'>" + username + ' has just joined the chat!</span>';
+    $("#message-frame .pleaseWait").parent().hide();
     if(username !== undefined) {
         socket.emit('newUser', {username: username});
-        socket.emit('chat message', {message: message});
+        socket.emit('chat message', {message: message, profilePic: _profilePic});
     }
-
-    $("#message-frame .pleaseWait").parent().remove();
 });
 
 socket.on('userTyping', function(user) {
-    console.log(user + " is typing");
     $(".userTyping").show().html(user + " is typing...");
 
     setTimeout(function() {
@@ -114,7 +115,7 @@ socket.on('chat message', function(data) {
 });
 
 function addMessage(messageData) {
-    $("#message-frame").prepend("<li>"+ messageData +"</li>");
+    $("#message-frame").prepend("<li><div class='profilePicHolder'><img src='"+ messageData.profilePic +"' class='profileImg' /></div>"+ messageData.message +"</li>");
 
     $("#message-frame li").each(function() {
         if($(this).find("span").data("user") == $("#messageSend").data("user")) {
@@ -122,6 +123,7 @@ function addMessage(messageData) {
         }
 
         if($(this).find("span").hasClass("systemMessage")) {
+            $(this).find(".profilePicHolder").remove();
             $(this).addClass("systemMessageContainer")
         }
 
@@ -133,8 +135,8 @@ function addMessage(messageData) {
 }
 
 $(document).ready(function() {
-
-    addMessage("<span class='pleaseWait systemMessage'>Please wait... you're being connected to the live chat</span>");
+    _profilePic = $("#messageSend").data('profileimg');
+    addMessage({message: "<span class='pleaseWait systemMessage'>Please wait... you're being connected to the live chat</span>", profilePic: null});
 
     $("#messageSend").keydown(function(event) {
         socket.emit("userTyping", username);
@@ -153,7 +155,7 @@ $(document).ready(function() {
         var _message = $("#message").html();
         $("#message").html("");
         if(_message != "") {
-            socket.emit('chat message', {message: "<span data-user='"+username+"' data-usertype='"+usertype+"'>" + username + "</span><br />" + _message + "<div class='time'>@"+ h + ":" + m + ":" + s +"</div>"});
+            socket.emit('chat message', {message: "<span data-user='"+username+"' data-usertype='"+usertype+"'>" + username + "</span><br />" + _message + "<div class='time'>@"+ h + ":" + m + ":" + s +"</div>", profilePic: _profilePic});
         }
         event.preventDefault();
     });
@@ -177,7 +179,6 @@ $(document).ready(function() {
 
     $(".popoverContent img").on("click", function() {
         var src=$(this).attr("src");
-        console.log(src)
         if(src == "img/emoji-list/bale-face.gif") {
             $("#message").append("<img width='74%' src='"+src+"' />");
             $(".popoverContent").hide();

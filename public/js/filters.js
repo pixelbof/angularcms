@@ -11,4 +11,9 @@ angular.module('myApp.filters', [])
         return url.toLowerCase();
       };
     }
-  ]);
+  ])
+  .filter('to_trusted', ['$sce', function($sce){
+    return function(text) {
+        return $sce.trustAsHtml(text);
+    };
+}]);;

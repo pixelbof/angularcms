@@ -6,6 +6,9 @@ var Page= require('../models/page.js');
 var adminUser= require('../models/admin-users.js');
 var userProfile= require('../models/user-profile.js');
 var socialMedia= require('../models/social-media.js');
+var ShopItem = require('../models/shop-product.js');
+var OrderHistory = require('../models/paymentHistory.js');
+
 
 /*Validate current session */
 function sessionCheck(request,response,next){
@@ -21,6 +24,7 @@ router.get('/', function(req, res) {
   res.send('Welcome to the API zone');
 });
 
+/* GET: Page html and information */
 router.get('/pages', function(request, response) {
     return Page.find(function(err, pages) {
         if (!err) {
@@ -31,6 +35,7 @@ router.get('/pages', function(request, response) {
     });
 });
 
+/* GET: Page social media icons and links */
 router.get('/socialMedia', function(request, response) {
     return socialMedia.find(function(err, social) {
         if (!err) {
@@ -50,6 +55,16 @@ router.get('/pages/details/:url', function(request, response) {
         if (err)
             return console.log(err);
         return response.send(page);
+    });
+});
+
+router.get('/shop/getItems', function(request, response) {
+    return ShopItem.find(function(err, items) {
+        if (!err) {
+            return response.send(items);
+        } else {
+            return response.send(500, err);
+        }
     });
 });
 
@@ -111,6 +126,107 @@ router.get('/socialMedia/delete/:id', sessionCheck, function(request, response) 
     });
     return response.send('Social media id- ' + id + ' has been deleted');
 });
+
+/*---- shop start ----- */
+
+/* POST: Add new Shop product item */
+router.post('/shop/add', sessionCheck, function(request, response) {
+    console.log(request.body)
+    var _shopItem = new ShopItem({
+        productName: request.body.productName,
+        productImage: request.body.productImage,
+        productDescription: request.body.productDescription,
+        productSize: request.body.productSize,
+        productPrice: request.body.productPrice
+    });
+
+    _shopItem.save(function(err) {
+        if (!err) {
+            return response.send(200, _shopItem);
+        } else {
+            return response.send(500, err);
+        }
+    });
+});
+
+/* POST: Update single social media item */
+router.post('/shop/update', sessionCheck, function(request, response) {
+    var id = request.body._id;
+
+    ShopItem.update({
+        _id: id
+    }, {
+        $set: {
+            productName: request.body.productName,
+            productImage: request.body.productImage,
+            productDescription: request.body.productDescription,
+            productOpts: {
+                productSize: request.body.productSize,
+                productPrice: request.body.productPrice
+            }
+        }
+    }).exec();
+    response.send(request.body.title + " link updated");
+});
+
+router.post('/shop/payment/success', function(request, response) {
+
+    var _paymentHistory = new OrderHistory({
+        userName: request.body.userName,
+        userAddress: request.body.userAddress,
+        productName: request.body.productName,
+        productSize: request.body.productSize,
+        productPrice: request.body.productPrice
+    });
+
+    _paymentHistory.save(function(err) {
+        if (!err) {
+            return response.send(200, _paymentHistory);
+        } else {
+            return response.send(500, err);
+        }
+    });
+});
+
+
+/* GET: Delete single social media item */
+router.get('/shopItem/delete/:id', sessionCheck, function(request, response) {
+    var id = request.params.id;
+    ShopItem.remove({
+        _id: id
+    }, function(err) {
+        return console.log(err);
+    });
+    return response.send('Social media id- ' + id + ' has been deleted');
+});
+
+router.get('/shop/transactions', function(request, response) {
+return OrderHistory.find(function(err, items) {
+        if (!err) {
+            return response.send(items);
+        } else {
+            return response.send(500, err);
+        }
+    });
+});
+
+router.post('/shop/transaction/update', function(request, response) {
+    var id = request.body.id;
+    var status = request.body.status
+
+    OrderHistory.update({
+        _id: id
+    }, {
+        $set: {
+            orderStatus: status,
+            lastUpdated: new Date(Date.now())
+        }
+    }).exec();
+
+    response.send(id + " updated successfully");
+});
+
+/*---- shop end -----*/
 
 
 /* POST: Add new pages */
@@ -186,6 +302,7 @@ router.post('/add-user', function(request, response) {
         username: request.body.username,
         password: hash,
         userType: userType,
+        chatName: request.body.chatName,
         accountStatus: request.body.accountStatus,
         dateAdded: new Date(Date.now())
     });
@@ -248,7 +365,11 @@ router.get('/get-profile-pic/:user', function(request, response) {
         username: request.params.user
     }, function(err, data) {
         try {
-            return response.send(data.profileImage)
+            if(data == null) {
+                return response.send("/img/profile/generic.jpg");
+            } else {
+                return response.send(data.profileImage);
+            }
         } catch(err) {
             return response.send('false')
         }
@@ -350,6 +471,7 @@ router.post('/login', function(request, response) {
       return response.send(401, "User Doesn't exist");
     } else {
       var usr = data;
+      console.log("user data", usr)
       if (username == usr.username && bcrypt.compareSync(password, usr.password)) {
         adminUser.update({
             username: usr.username
@@ -361,7 +483,7 @@ router.post('/login', function(request, response) {
 
         request.session.regenerate(function() {
           request.session.user = username;
-          return response.send({user: username, userType: usr.userType, accountStatus: usr.accountStatus});
+          return response.send({user: username, userType: usr.userType, chatName: usr.chatName, accountStatus: usr.accountStatus});
 
         });
       } else {
