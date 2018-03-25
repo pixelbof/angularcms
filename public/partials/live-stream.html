@@ -23,7 +23,7 @@
                     <div class="userTyping">user is typing...</div>
                 </div>
 
-                <div id="messageSend" data-user='{{chatName}}' data-usertype='{{userType}}' data-profileimg='{{profileImg}}'>
+                <div id="messageSend" data-user='{{loggedInUser}}' data-usertype='{{userType}}' data-profileimg='{{profileImg}}'>
                     <div id="messageControl" class="clearfix">
                         <div id="message" class="col-md-9" contenteditable="true"></div>
                         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -51,8 +51,7 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
-var username = localStorage.getItem("chatName");
-//var socket = io.connect('http://localhost:3001', {'query': '&user='+username, path: '/socket.io/', transports: ['websocket', 'polling']});
+var username;
 var socket = io.connect('https://houseologychat.herokuapp.com', {'query': '&user='+username, path: '/socket.io/', transports: ['websocket', 'polling']});
 var usertype;
 var _profilePic;
@@ -82,7 +81,7 @@ var emojis = ['angel.svg',
 
 socket.on('welcome', function(data) {
     usertype= $("#messageSend").data('usertype');
-    
+    username  = $("#messageSend").data("user");
     
     message = "<span class='systemMessage'>" + username + ' has just joined the chat!</span>';
     $("#message-frame .pleaseWait").parent().hide();
